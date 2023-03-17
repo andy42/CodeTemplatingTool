@@ -5,7 +5,8 @@ data class Project(
     var name : String = "",
     var projectPath : String = "",
     var kotlinSrcPath : String = "",
-    var mainPackage : String = ""
+    var mainPackage : String = "",
+    var variable : List<VariableData> = listOf()
 ){
     companion object {
         fun temp() = Project(
@@ -13,7 +14,17 @@ data class Project(
             name = "Code Tool",
             projectPath = "C:\\Users\\andy\\IdeaProjects\\CodeTool",
             kotlinSrcPath = "\\src\\jvmMain\\kotlin",
-            mainPackage = "\\com\\jaehl\\codeTool"
+            mainPackage = "\\com\\jaehl\\codeTool",
+            variable = listOf(
+                VariableData("SrcPath", TemplateVariableType.Path, "\\src\\jvmMain\\kotlin"),
+                VariableData("mainPackage", TemplateVariableType.Package, "\\com\\jaehl\\codeTool")
+            )
         )
     }
 }
+
+data class VariableData(
+    val name : String = "",
+    val type : TemplateVariableType,
+    var value : String
+)

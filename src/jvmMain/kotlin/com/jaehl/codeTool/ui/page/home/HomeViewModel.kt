@@ -105,12 +105,12 @@ class HomeViewModel(
         return templateParser.parse(template!!, values)
     }
 
-    fun onGenerateTemplateClick(name : String, folderName : String) = viewModelScope.launch {
+    private fun onGenerateTemplate() = viewModelScope.launch {
         val output : List<TemplateFileOutput> = parseTemplate()
         templateFileOutputs.postSwap(output)
     }
 
-    fun onSaveTemplateClick(name : String, folderName : String) = viewModelScope.launch {
+    fun onSaveTemplateClick() = viewModelScope.launch {
         if( !areVariablesSet()) return@launch
 
         val output : List<TemplateFileOutput> = parseTemplate()
@@ -134,12 +134,14 @@ class HomeViewModel(
         }
         templateFileOutputs.postSwap(listOf())
         variables.postSwap(tempVariable)
+        onGenerateTemplate()
     }
 
     fun onVariableStringChange(name : String, value : String) = viewModelScope.launch {
         val temp = variables.toList()
         (temp.firstOrNull{it.name == name} as? VariableString)?.value = value
         variables.postSwap(temp)
+        onGenerateTemplate()
     }
 
     fun onOpenPackagePickerDialog(variableName : String) = viewModelScope.launch {
@@ -175,6 +177,7 @@ class HomeViewModel(
         variables.postSwap(temp)
 
         selectedVariablePackageName = ""
+        onGenerateTemplate()
     }
 
     data class PackageData(

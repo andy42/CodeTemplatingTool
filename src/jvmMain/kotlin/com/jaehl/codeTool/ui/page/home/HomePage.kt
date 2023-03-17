@@ -2,11 +2,17 @@ package com.jaehl.codeTool.ui.page.home
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.jaehl.codeTool.data.model.Template
 import com.jaehl.codeTool.data.model.TemplateFileOutput
@@ -18,7 +24,8 @@ import com.jaehl.codeTool.ui.component.Picker
 @Composable
 fun HomePage(
     viewModel : HomeViewModel,
-    onGoBackClicked: () -> Unit
+    onGoBackClicked: () -> Unit,
+    onOpenTemplateList: () -> Unit
 ) {
     Box {
         Column(modifier = Modifier.background(R.Color.pageBackground)) {
@@ -30,11 +37,32 @@ fun HomePage(
                 }
             )
             Row {
-                TemplateList(
-                    viewModel,
-                    viewModel.templates,
-                    viewModel.selectedTemplateIndex.value
-                )
+                Column(
+                    modifier = Modifier.width(170.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .padding(start = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+
+                    ) {
+                        Text(text = "Templates", modifier = Modifier.align(alignment = Alignment.CenterVertically))
+                        IconButton(
+                            content = {
+                                Icon(Icons.Outlined.Settings, "Settings", tint = R.Color.primary)
+                            }, onClick = {
+                                onOpenTemplateList()
+                            }
+                        )
+                    }
+                    TemplateList(
+                        viewModel,
+                        viewModel.templates,
+                        viewModel.selectedTemplateIndex.value
+                    )
+                }
                 MainPannel(viewModel)
             }
         }
@@ -58,10 +86,6 @@ fun MainPannel(
     viewModel : HomeViewModel
 ) {
     val state : ScrollState = rememberScrollState()
-    var folderName by remember { mutableStateOf( "") }
-    var name by remember { mutableStateOf( "") }
-
-    var textFileName by remember { mutableStateOf( "") }
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -90,19 +114,11 @@ fun MainPannel(
                 }
             }
         }
-        Row() {
-            TextButton(onClick = {
-                viewModel.onGenerateTemplateClick(name, folderName)
-            }){
-                Text(text = "Generate Template")
-            }
-            TextButton(onClick = {
-                viewModel.onSaveTemplateClick(name, folderName)
-            }){
-                Text(text = "Save Template")
-            }
+        TextButton(onClick = {
+            viewModel.onSaveTemplateClick()
+        }){
+            Text(text = "Save Template")
         }
-
 
         viewModel.templateFileOutputs.forEach { templateFileOutput ->
             TemplateFile(templateFileOutput)
@@ -142,7 +158,7 @@ fun TemplateList(
     selectedTemplateIndex : Int
 ){
     LazyColumn(
-        modifier = Modifier.width(170.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
         itemsIndexed(templates) { index, template ->
             TemplateRow(viewModel, index, template, selectedTemplateIndex)

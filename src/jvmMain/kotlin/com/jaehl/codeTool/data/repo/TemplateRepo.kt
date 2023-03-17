@@ -1,5 +1,6 @@
 package com.jaehl.codeTool.data.repo
 
+import com.jaehl.codeTool.data.local.ObjectListLoader
 import com.jaehl.codeTool.data.local.TemplateListFile
 import com.jaehl.codeTool.data.model.Template
 import com.jaehl.codeTool.util.Logger
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.SharedFlow
 
 class TemplateRepo(
     private val logger: Logger,
-    private val templateListFile : TemplateListFile
+    private val templateListLoader : ObjectListLoader<Template>
 ) {
 
     private val templateMap = LinkedHashMap<String, Template>()
@@ -34,7 +35,7 @@ class TemplateRepo(
 
     fun updateTemplate(template : Template){
         templateMap[template.id] = template
-        templateListFile.save(templateMap.values.toList())
+        templateListLoader.save(templateMap.values.toList())
         templates.tryEmit(templateMap.values.toList())
     }
 
@@ -52,7 +53,7 @@ class TemplateRepo(
         if(loaded && !forceReload) return
         try {
             templateMap.clear()
-            templateListFile.load().forEach {
+            templateListLoader.load().forEach {
                 templateMap[it.id] = it
             }
         } catch (t : Throwable){
