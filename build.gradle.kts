@@ -6,7 +6,7 @@ plugins {
 //    kotlin("multiplatform")
 //    id("org.jetbrains.compose")
 
-    val kotlinVersion = "1.6.10"
+    val kotlinVersion = "1.8.0"
     kotlin("multiplatform")
     id("org.jetbrains.compose")
     //kotlin("jvm") version kotlinVersion
@@ -15,6 +15,8 @@ plugins {
 
 group = "com.jaehl"
 version = "1.0-SNAPSHOT"
+
+val coroutinesVersion = "1.3.6"
 
 val daggerVersion by extra("2.39.1")
 
@@ -39,10 +41,12 @@ kotlin {
                 // Dagger : A fast dependency injector for Android and Java.
                 implementation("com.google.dagger:dagger-compiler:$daggerVersion")
 
+                implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$coroutinesVersion")
+
                 implementation ("org.jsoup:jsoup:1.8.3")
                 implementation ("com.google.code.gson:gson:2.8.9")
-                implementation("com.arkivanov.decompose:decompose:0.6.0")
-                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.6.0")
+                implementation("com.arkivanov.decompose:decompose:1.0.0")
+                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:1.0.0")
             }
         }
         val jvmTest by getting

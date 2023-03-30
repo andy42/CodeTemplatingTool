@@ -1,12 +1,14 @@
 package com.jaehl.codeTool.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
-import com.arkivanov.decompose.extensions.compose.jetbrains.Children
-import com.arkivanov.decompose.router.pop
-import com.arkivanov.decompose.router.push
-import com.arkivanov.decompose.router.router
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.google.gson.reflect.TypeToken
 import com.jaehl.codeTool.Configuration
@@ -21,10 +23,12 @@ import com.jaehl.codeTool.data.templateCreator.TemplateCreatorImp
 import com.jaehl.codeTool.data.templateParser.TemplateParser
 import com.jaehl.codeTool.data.templateParser.TemplateParserImp
 import com.jaehl.codeTool.ui.page.home.HomePageComponent
+import com.jaehl.codeTool.ui.page.projectEdit.ProjectEditComponent
 import com.jaehl.codeTool.ui.page.projectList.ProjectListComponent
 import com.jaehl.codeTool.ui.page.templateEdit.TemplateEditComponent
 import com.jaehl.codeTool.ui.page.templateList.TemplateListComponent
-import com.jaehl.codeTool.ui.page.templateList.TemplateListPage
+import com.jaehl.codeTool.ui.util.OsPathConverter
+import com.jaehl.codeTool.ui.util.OsPathConverterImp
 import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.FileUtilImp
 import com.jaehl.codeTool.util.Logger
@@ -46,7 +50,9 @@ class NavHostComponent(
         projectUserDir = configuration.getProjectUserDir(),
         templateListFile = configuration.getTemplateListFile())
 
-    private val templateRepo : TemplateRepo = TemplateRepo(logger, templateListLoader)
+    private val osPathConverter : OsPathConverter = OsPathConverterImp()
+
+    private val templateRepo : TemplateRepo = TemplateRepo(logger, templateListLoader, osPathConverter)
 
     private val projectListLoader : ObjectListLoader<Project> = ObjectListJsonLoader(
         logger = logger,
@@ -54,14 +60,24 @@ class NavHostComponent(
         projectUserDir = configuration.getProjectUserDir(),
         templateListFile = configuration.getProjectListFile())
 
-    private val projectRepo : ProjectRepo = ProjectRepo(logger, projectListLoader)
+    private val projectRepo : ProjectRepo = ProjectRepo(logger, projectListLoader, osPathConverter)
 
     private val templateCreator : TemplateCreator = TemplateCreatorImp(fileUtil, logger)
 
-    private val router = router<ScreenConfig, Component>(
-        initialConfiguration = ScreenConfig.ProjectList,
-        childFactory = ::createScreenComponent
-    )
+//    private val router = router<ScreenConfig, Component>(
+//        initialConfiguration = ScreenConfig.ProjectList,
+//        childFactory = ::createScreenComponent
+//    )
+
+    private val navigation = StackNavigation<ScreenConfig>()
+
+    private val _childStack =
+        childStack(
+            source = navigation,
+            initialConfiguration = ScreenConfig.ProjectList,
+            handleBackButton = true, // Pop the back stack on back button press
+            childFactory = ::createScreenComponent,
+        )
 
     private fun createScreenComponent(
         screenConfig: ScreenConfig,
@@ -79,11 +95,21 @@ class NavHostComponent(
                 ::onGoBackClicked,
                 ::onOpenTemplateList
             )
+            is ScreenConfig.ProjectEdit -> ProjectEditComponent(
+                componentContext,
+                logger,
+                osPathConverter,
+                projectRepo,
+                fileUtil,
+                screenConfig.project,
+                ::onGoBackClicked
+            )
             is ScreenConfig.ProjectList -> ProjectListComponent(
                 componentContext,
                 logger,
                 projectRepo,
                 ::onProjectSelected,
+                ::onProjectEdit,
                 ::onGoBackClicked
             )
             is ScreenConfig.TemplateList -> TemplateListComponent(
@@ -104,23 +130,31 @@ class NavHostComponent(
     }
 
     private fun onOpenTemplateEdit(template : Template){
-        router.push(ScreenConfig.TemplateEdit(template))
+        navigation.push(ScreenConfig.TemplateEdit(template))
     }
     private fun onOpenTemplateList(){
-        router.push(ScreenConfig.TemplateList)
+        navigation.push(ScreenConfig.TemplateList)
+    }
+
+    private fun onProjectEdit(project : Project?){
+        navigation.push(ScreenConfig.ProjectEdit(project))
     }
     private fun onProjectSelected(project : Project){
-        router.push(ScreenConfig.Home(project))
+        navigation.push(ScreenConfig.Home(project))
     }
 
     private fun onGoBackClicked() {
-        router.pop()
+        navigation.pop()
     }
 
     @OptIn(ExperimentalDecomposeApi::class)
     @Composable
     override fun render() {
-        Children(routerState = router.state) {
+//        Children(routerState = router.state) {
+//            it.instance.render()
+//        }
+
+        Children(stack = _childStack, modifier = Modifier){
             it.instance.render()
         }
     }
@@ -131,5 +165,7 @@ class NavHostComponent(
         object TemplateList : ScreenConfig()
 
         data class TemplateEdit(val template: Template) : ScreenConfig()
+
+        data class ProjectEdit(val project: Project?) : ScreenConfig()
     }
 }

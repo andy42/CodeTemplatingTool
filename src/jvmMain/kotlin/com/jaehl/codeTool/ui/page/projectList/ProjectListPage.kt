@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jaehl.codeTool.data.model.Project
@@ -17,11 +20,13 @@ fun ProjectListPage(
     viewModel : ProjectListViewModel,
     onGoBackClicked: () -> Unit
 ) {
-    Box {
-        Column(
-            modifier = Modifier
-                .background(R.Color.pageBackground)
-        ) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(R.Color.pageBackground)
+    ) {
+        Column() {
             AppBar(
                 title = "Projects",
                 returnButton = false,
@@ -31,20 +36,34 @@ fun ProjectListPage(
             )
             val state : ScrollState = rememberScrollState()
 
-            LazyColumn(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-//                    .fillMaxHeight()
-//                    .verticalScroll(state)
+                    .align(alignment = Alignment.CenterHorizontally)
+                    .width(400.dp)
             ) {
-                itemsIndexed(viewModel.projects) { index, project ->
-                    ProjectRow(viewModel, index, project)
+                Button(
+                    modifier = Modifier
+                        .align(alignment = Alignment.CenterHorizontally)
+                        .padding(top = 10.dp),
+                    onClick = {
+                        viewModel.onProjectAddClick()
+                    },
+                ) {
+                    Text(text = "Add Project")
+                }
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                ) {
+                    itemsIndexed(viewModel.projects) { index, project ->
+                        ProjectRow(viewModel, index, project)
+                    }
                 }
             }
         }
     }
 }
-
 
 @Composable
 fun ProjectRow(
@@ -52,14 +71,30 @@ fun ProjectRow(
     index : Int,
     project : Project
 ){
-    Text(
-        text = project.name,
+    Box(
         modifier = Modifier
             .fillMaxWidth()
+            .height(40.dp)
+            .background(R.Color.cardTitleBackground)
             .clickable {
                 viewModel.onProjectSelectClick(project)
             }
-            //.background(if (index == selectedTemplateIndex) R.Color.rowBackgroundEven else R.Color.rowBackgroundOdd)
-            .padding(start = 10.dp, top = 3.dp, bottom = 3.dp)
-    )
+    ){
+        Text(
+            text = project.name,
+            modifier = Modifier
+                .align(alignment = Alignment.CenterStart)
+                //.background(if (index == selectedTemplateIndex) R.Color.rowBackgroundEven else R.Color.rowBackgroundOdd)
+                .padding(start = 10.dp, top = 3.dp, bottom = 3.dp)
+        )
+        IconButton(
+            modifier = Modifier
+                .align(alignment = Alignment.CenterEnd),
+            content = {
+                Icon(Icons.Outlined.Edit, "Edit", tint = R.Color.primary)
+            }, onClick = {
+                viewModel.onProjectEditClick(project)
+            }
+        )
+    }
 }

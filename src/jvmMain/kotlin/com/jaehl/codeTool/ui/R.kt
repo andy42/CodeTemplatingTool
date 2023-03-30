@@ -9,6 +9,7 @@ object R {
         val rowBackgroundOdd = Color(0xffffffff)
         val rowBackgroundEven = Color(0xffededed)
 
+        val barDivider = Color(0xffbfa456)
 
         val rowBackgroundSecondOdd = Color(0xffe0ecff)
         val rowBackgroundSecondEven = Color(0xffd5d8e8)
@@ -21,6 +22,8 @@ object R {
         val cardBackground = Color(0xffffffff)
         val cardTitleBackground = Color(0xffdedede)
         val cardTitleText = Color(0xff5e5e5e)
+
+        val cardSubTitleBackground = Color(0xffbfa456)
 
         val recipeCircle = Color(0xffababab)
 

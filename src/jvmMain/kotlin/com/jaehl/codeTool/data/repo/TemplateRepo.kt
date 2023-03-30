@@ -1,8 +1,8 @@
 package com.jaehl.codeTool.data.repo
 
 import com.jaehl.codeTool.data.local.ObjectListLoader
-import com.jaehl.codeTool.data.local.TemplateListFile
 import com.jaehl.codeTool.data.model.Template
+import com.jaehl.codeTool.ui.util.OsPathConverter
 import com.jaehl.codeTool.util.Logger
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -11,7 +11,8 @@ import kotlinx.coroutines.flow.SharedFlow
 
 class TemplateRepo(
     private val logger: Logger,
-    private val templateListLoader : ObjectListLoader<Template>
+    private val templateListLoader : ObjectListLoader<Template>,
+    private val osPathConverter : OsPathConverter
 ) {
 
     private val templateMap = LinkedHashMap<String, Template>()
@@ -54,7 +55,7 @@ class TemplateRepo(
         try {
             templateMap.clear()
             templateListLoader.load().forEach {
-                templateMap[it.id] = it
+                templateMap[it.id] = osPathConverter.convertPathsToOsFormat(it)
             }
         } catch (t : Throwable){
             logger.error("TemplateRepo ${t.message}")

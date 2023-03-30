@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.stream.Collectors
-import kotlinx.coroutines.flow.collect
 
 class HomeViewModel(
     private val logger : Logger,
@@ -89,7 +88,7 @@ class HomeViewModel(
             "USER_DIR" to System.getProperty("user.home")
         )
         values["TEMPLATE_DIR"] = templateParser.parseString(template!!.dirPath, values)
-        values["projectPackage"] = project.mainPackage.replace("\\", ".").substring(1);
+        values["projectPackage"] = project.mainPackage.replace("\\", ".").substring(1)
 
         variables.toList().forEach {
             when(it) {

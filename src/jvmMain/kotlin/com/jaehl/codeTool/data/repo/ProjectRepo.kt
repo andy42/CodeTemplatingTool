@@ -2,6 +2,7 @@ package com.jaehl.codeTool.data.repo
 
 import com.jaehl.codeTool.data.local.ObjectListLoader
 import com.jaehl.codeTool.data.model.Project
+import com.jaehl.codeTool.ui.util.OsPathConverter
 import com.jaehl.codeTool.util.Logger
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -10,7 +11,8 @@ import kotlinx.coroutines.flow.SharedFlow
 
 class ProjectRepo(
     private val logger: Logger,
-    private val projectListLoader : ObjectListLoader<Project>
+    private val projectListLoader : ObjectListLoader<Project>,
+    private val osPathConverter : OsPathConverter
 ) {
 
     private val projectMap = LinkedHashMap<String, Project>()
@@ -21,9 +23,6 @@ class ProjectRepo(
     init {
         GlobalScope.async {
             loadLocal(true)
-            if (projectMap.values.isEmpty()){
-                updateProject(Project.temp())
-            }
             projects.tryEmit(projectMap.values.toList())
         }
     }
@@ -56,7 +55,7 @@ class ProjectRepo(
         try {
             projectMap.clear()
             projectListLoader.load().forEach {
-                projectMap[it.id] = it
+                projectMap[it.id] = osPathConverter.convertPathsToOsFormat(it)
             }
         } catch (t : Throwable){
             logger.error("ProjectRepo ${t.message}")
