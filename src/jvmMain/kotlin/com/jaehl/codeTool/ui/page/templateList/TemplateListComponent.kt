@@ -14,7 +14,7 @@ class TemplateListComponent(
     private val logger : Logger,
     private val templateRepo : TemplateRepo,
     private val onGoBackClicked: () -> Unit,
-    private val onOpenTemplateEdit: (Template) -> Unit
+    private val onOpenTemplateEdit: (template : Template?) -> Unit
 ) : Component, ComponentContext by componentContext {
 
     private val viewModel = TemplateListViewModel(logger, templateRepo, onOpenTemplateEdit)

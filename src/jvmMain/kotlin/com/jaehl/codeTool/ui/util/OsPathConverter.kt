@@ -4,6 +4,7 @@ import com.jaehl.codeTool.data.model.*
 import java.io.File
 
 interface OsPathConverter {
+    fun getFileName(path : String) : String
     fun convertPath(path : String) : String
     fun convertPathsToOsFormat(project : Project) : Project
     fun convertPathsToOsFormat(template : Template) : Template
@@ -13,6 +14,10 @@ class OsPathConverterImp :  OsPathConverter{
 
     companion object {
         private const val localPathSeparator = "/"
+    }
+
+    override fun getFileName(path : String) : String {
+        return path.split(localPathSeparator).lastOrNull() ?: ""
     }
 
     override fun convertPath(path : String) : String {

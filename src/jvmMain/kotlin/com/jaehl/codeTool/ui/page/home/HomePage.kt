@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -51,7 +52,7 @@ fun HomePage(
                         Text(text = "Templates", modifier = Modifier.align(alignment = Alignment.CenterVertically))
                         IconButton(
                             content = {
-                                Icon(Icons.Outlined.Settings, "Settings", tint = R.Color.primary)
+                                Icon(Icons.Outlined.Edit, "Edit", tint = R.Color.primary)
                             }, onClick = {
                                 onOpenTemplateList()
                             }

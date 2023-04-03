@@ -7,13 +7,12 @@ import com.jaehl.codeTool.extensions.postSwap
 import com.jaehl.codeTool.ui.util.ViewModel
 import com.jaehl.codeTool.util.Logger
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class TemplateListViewModel(
     private val logger : Logger,
     private val templateRepo : TemplateRepo,
-    private val onOpenTemplateEdit: (Template) -> Unit
+    private val onOpenTemplateEdit: (template : Template?) -> Unit
 ) : ViewModel() {
 
     var templates = mutableStateListOf<Template>()
@@ -31,5 +30,9 @@ class TemplateListViewModel(
 
     fun onTemplateSelectClick(template : Template) {
         onOpenTemplateEdit(template)
+    }
+
+    fun onTemplateAddClick() {
+        onOpenTemplateEdit(null)
     }
 }

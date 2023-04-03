@@ -1,8 +1,8 @@
 package com.jaehl.codeTool.data.model
 
 data class TemplateFile(
-    val path : String = "",
-    val pathDestination : String = ""
+    var path : String = "",
+    var pathDestination : String = ""
 )
 
 enum class TemplateVariableType(val value : kotlin.String){

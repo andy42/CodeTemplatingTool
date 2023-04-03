@@ -124,12 +124,13 @@ class NavHostComponent(
                 logger,
                 fileUtil,
                 templateRepo,
+                screenConfig.template,
                 ::onGoBackClicked
             )
         }
     }
 
-    private fun onOpenTemplateEdit(template : Template){
+    private fun onOpenTemplateEdit(template : Template?){
         navigation.push(ScreenConfig.TemplateEdit(template))
     }
     private fun onOpenTemplateList(){
@@ -164,7 +165,7 @@ class NavHostComponent(
         object ProjectList : ScreenConfig()
         object TemplateList : ScreenConfig()
 
-        data class TemplateEdit(val template: Template) : ScreenConfig()
+        data class TemplateEdit(val template: Template?) : ScreenConfig()
 
         data class ProjectEdit(val project: Project?) : ScreenConfig()
     }

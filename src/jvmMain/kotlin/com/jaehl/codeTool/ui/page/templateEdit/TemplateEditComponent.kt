@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import com.arkivanov.decompose.ComponentContext
+import com.jaehl.codeTool.data.model.Template
 import com.jaehl.codeTool.data.repo.TemplateRepo
 import com.jaehl.codeTool.ui.navigation.Component
 import com.jaehl.codeTool.util.FileUtil
@@ -14,10 +15,11 @@ class TemplateEditComponent(
     private val logger : Logger,
     private val fileUtil : FileUtil,
     private val templateRepo : TemplateRepo,
+    private val template : Template?,
     private val onGoBackClicked: () -> Unit
 ) : Component, ComponentContext by componentContext {
 
-    private val viewModel = TemplateEditViewModel(logger, fileUtil, templateRepo)
+    private val viewModel = TemplateEditViewModel(logger, fileUtil, templateRepo, template)
 
     @Composable
     override fun render() {

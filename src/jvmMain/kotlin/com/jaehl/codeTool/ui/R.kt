@@ -35,5 +35,8 @@ object R {
         val debugBlue = Color(0xff0000ff)
 
         val transparent = Color(0x00000000)
+
+        val rowHoverBackground = Color(0x11000000)
+        val rowActiveBackground = primary
     }
 }
