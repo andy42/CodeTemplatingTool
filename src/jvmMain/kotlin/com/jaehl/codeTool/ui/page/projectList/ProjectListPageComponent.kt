@@ -15,10 +15,11 @@ class ProjectListComponent(
     private val projectRepo : ProjectRepo,
     private val onProjectSelected: (project : Project) -> Unit,
     private val onProjectEdit : (project : Project?) -> Unit,
+    private val onTemplatesEdit : () -> Unit,
     private val onGoBackClicked: () -> Unit
 ) : Component, ComponentContext by componentContext {
 
-    private val viewModel = ProjectListViewModel(logger, projectRepo, onProjectSelected, onProjectEdit)
+    private val viewModel = ProjectListViewModel(logger, projectRepo, onProjectSelected, onProjectEdit, onTemplatesEdit)
 
     @Composable
     override fun render() {

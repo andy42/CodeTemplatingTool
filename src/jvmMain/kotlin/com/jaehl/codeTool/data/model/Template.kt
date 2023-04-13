@@ -1,8 +1,8 @@
 package com.jaehl.codeTool.data.model
 
 data class TemplateFile(
-    val path : String = "",
-    val pathDestination : String = ""
+    var path : String = "",
+    var pathDestination : String = ""
 )
 
 enum class TemplateVariableType(val value : kotlin.String){
@@ -16,10 +16,11 @@ enum class TemplateVariableType(val value : kotlin.String){
 }
 
 data class TemplateVariable(
-    val name : String = "",
-    val type : TemplateVariableType = TemplateVariableType.String,
-    val projectVariable : Boolean = false,
-    val default : String = ""
+    var name : String = "",
+    var type : TemplateVariableType = TemplateVariableType.String,
+    var projectVariable : Boolean = false,
+    var startPath : String = "",
+    var default : String = ""
 )
 
 data class TemplateFileOutput(
@@ -29,8 +30,8 @@ data class TemplateFileOutput(
 
 data class Template(
     var id : String = "",
-    val name : String = "",
-    val dirPath : String = "",
-    val variable : List<TemplateVariable> = arrayListOf(),
-    val files : List<TemplateFile> = arrayListOf()
+    var name : String = "",
+    var dirPath : String = "",
+    var variable : List<TemplateVariable> = arrayListOf(),
+    var files : List<TemplateFile> = arrayListOf()
 )

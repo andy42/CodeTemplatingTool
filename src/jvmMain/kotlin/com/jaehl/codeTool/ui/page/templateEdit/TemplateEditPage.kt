@@ -1,33 +1,451 @@
 package com.jaehl.codeTool.ui.page.templateEdit
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.res.useResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.jaehl.codeTool.data.model.TemplateVariable
+import com.jaehl.codeTool.data.model.TemplateVariableType
 import com.jaehl.codeTool.ui.R
 import com.jaehl.codeTool.ui.component.AppBar
+import com.jaehl.codeTool.ui.component.Picker
+import com.jaehl.codeTool.ui.component.VerticalDivider
 
 @Composable
 fun TemplateEditPage(
-    viewModel : TemplateEditViewModel,
-    onGoBackClicked: () -> Unit
+    viewModel : TemplateEditViewModel
 ) {
-    Box {
-        Column(
+    Column(modifier = Modifier.background(R.Color.pageBackground)) {
+        AppBar(
+            title = "TemplateEdit",
+            returnButton = true,
+            onBackClick = {
+                viewModel.onCloseClick()
+            }
+        )
+        Row(
             modifier = Modifier
-                .background(R.Color.pageBackground)
         ) {
-            AppBar(
-                title = "TemplateEdit",
-                returnButton = true,
-                onBackClick = {
-                    onGoBackClicked()
-                }
+            NavView(viewModel)
+            VerticalDivider(
+                thickness = 1.dp,
+                color = R.Color.dividerColor
             )
-            Row {
-                Text("NEW Page")
+
+            val navRowFileSelect = (viewModel.selectedNavRow.value as? TemplateEditViewModel.NavRowSelect.NavRowFileSelect)
+
+            if(viewModel.selectedNavRow.value is TemplateEditViewModel.NavRowSelect.NavRowGeneralInfoSelect) {
+                MainPannel(viewModel)
+            }
+            else if (navRowFileSelect != null){
+                FilePannel(
+                    viewModel = viewModel,
+                    templateFile = viewModel.files[navRowFileSelect.index]
+                )
             }
         }
     }
 }
+
+@Composable
+fun NavView(
+    viewModel : TemplateEditViewModel
+) {
+    val fileBitmap = remember { useResource("file.png") { loadImageBitmap(it) } }
+    Column(
+        modifier = Modifier
+            .width(250.dp)
+    ) {
+        NavRowTitle(
+            title = "General Info",
+            iconBitmap = null,
+            selected = (viewModel.selectedNavRow.value is TemplateEditViewModel.NavRowSelect.NavRowGeneralInfoSelect),
+            onClick = {
+                viewModel.onGeneralInfoClick()
+            }
+        )
+
+        NavRowHeading(
+            title = "Files",
+            icon = Icons.Outlined.Add,
+            onIconClick = {
+                viewModel.addTemplateFile()
+            }
+        )
+
+        viewModel.files.forEachIndexed { index, file ->
+            val navRowFileSelect = (viewModel.selectedNavRow.value as? TemplateEditViewModel.NavRowSelect.NavRowFileSelect)
+            NavRowTitle(
+                title = file.name,
+                iconBitmap = fileBitmap,
+                selected = (navRowFileSelect?.index == index),
+                onClick = {
+                    viewModel.onTemplateFileClick(index)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun NavRowHeading(
+    title : String,
+    icon : ImageVector? = null,
+    onIconClick : (() -> Unit)? = null
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp, start = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = title,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .background(R.Color.transparent)
+                .padding(top = 3.dp, bottom = 3.dp),
+            color = R.Color.textDark,
+            maxLines = 1
+        )
+        if(icon != null) {
+            IconButton(
+                modifier = Modifier,
+                content = {
+                    Icon(Icons.Outlined.Add, "Add File", tint = R.Color.textDark)
+                }, onClick = {
+                    onIconClick?.invoke()
+                }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun NavRowTitle(
+    title : String,
+    iconBitmap : ImageBitmap?,
+    selected : Boolean,
+    onClick : () -> Unit
+) {
+    var active by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+
+            .background(
+                if (selected) R.Color.rowActiveBackground
+                else if (active) R.Color.rowHoverBackground
+                else R.Color.transparent
+            )
+            .onPointerEvent(PointerEventType.Enter) {
+                active = true
+            }
+            .onPointerEvent(PointerEventType.Exit) {
+                active = false
+            }
+            .clickable {
+                onClick()
+
+            }
+            .padding(top = 5.dp, bottom = 5.dp)
+    ) {
+        if(iconBitmap != null) {
+            Image(
+                bitmap = iconBitmap,
+                "",
+                colorFilter = ColorFilter.tint(
+                    if (selected) R.Color.textLight
+                    else if (active) R.Color.textDark
+                    else R.Color.textDark
+                ),
+                modifier = Modifier
+                    .padding(start = 10.dp)
+                    .width(20.dp)
+                    .height(20.dp)
+                    .align(alignment = Alignment.CenterVertically)
+            )
+        }
+        Text(
+            text = title,
+            modifier = Modifier
+                .fillMaxWidth()
+
+                .padding(start = 10.dp, top = 3.dp, bottom = 3.dp),
+            color =
+                if (selected) R.Color.textLight
+                else if (active) R.Color.textDark
+                else R.Color.textDark,
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
+fun MainPannel(
+    viewModel : TemplateEditViewModel
+) {
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(10.dp)
+            .fillMaxWidth()
+            .background(R.Color.cardBackground)
+            .padding(10.dp)
+    ) {
+        OutlinedTextField(
+            value = viewModel.name.value.value,
+            onValueChange = {
+                viewModel.onNameChange(it)
+                            },
+            label = { Text("Name") },
+            isError = (viewModel.name.value.error != null),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 5.dp)
+        )
+        if(viewModel.name.value.error != null) {
+            Text(text = viewModel.name.value.error ?: "", color = R.Color.errorText)
+        }
+
+        OutlinedTextField(
+            value = viewModel.dirPath.value.value,
+            onValueChange = {
+                viewModel.onDirPathChange(it)
+            },
+            label = { Text("Directory Path") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 5.dp),
+            isError = (viewModel.dirPath.value.error != null)
+        )
+        if(viewModel.dirPath.value.error != null) {
+            Text(text = viewModel.dirPath.value.error ?: "", color = R.Color.errorText)
+        }
+
+        viewModel.variables.forEachIndexed { index, variable ->
+            TemplateVariable(
+                viewModel,
+                index,
+                variable
+            )
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 40.dp)
+        ) {
+            Button(
+                modifier = Modifier,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = R.Color.deleteButtonBackground,
+                    contentColor = R.Color.deleteButtonText
+                ),
+                onClick = {
+                    viewModel.deleteTemplate()
+                }
+            ) {
+                Text(text = "Delete Template")
+            }
+
+            Button(
+                modifier = Modifier,
+                onClick = {
+                    viewModel.addVariable()
+                }
+            ) {
+                Text(text = "Add Variable")
+            }
+
+            Button(
+                modifier = Modifier,
+                enabled = (viewModel.isSaveEnabled.value),
+                onClick = {
+                    viewModel.save()
+                }
+            ) {
+                Text(text = "Save")
+            }
+        }
+    }
+}
+
+@Composable
+fun TemplateVariable(
+    viewModel : TemplateEditViewModel,
+    index : Int,
+    templateVariable : TemplateVariable,
+) {
+    Column(
+        modifier = Modifier
+            .padding(top = 40.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(R.Color.cardSubTitleBackground)
+        ) {
+            Text(
+                text = if(templateVariable.name.isEmpty()) "Variable ${index +1}" else templateVariable.name,
+                color = R.Color.textLight,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 10.dp)
+            )
+            IconButton(
+                modifier = Modifier,
+                content = {
+                    Icon(Icons.Outlined.Delete, "Delete", tint = R.Color.textLight)
+                }, onClick = {
+                    viewModel.onTemplateVariableDelete(index)
+                }
+            )
+        }
+        OutlinedTextField(
+            value = templateVariable.name,
+            onValueChange = {
+                viewModel.onTemplateVariableNameChange(index, it)
+            },
+            label = { Text("Name") },
+            modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+        )
+
+        Picker(
+            title = "Type",
+            value = templateVariable.type.value,
+            onClick = {
+                viewModel.onTemplateVariableTypeClick(index)
+            },
+            modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+        )
+
+        if(templateVariable.type.value == TemplateVariableType.Package.value){
+            OutlinedTextField(
+                value = templateVariable.startPath,
+                onValueChange = {
+                    viewModel.onTemplateVariableStartPathChange(index, it)
+                },
+                label = { Text("Start Path") },
+                modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+            )
+        }
+
+        OutlinedTextField(
+            value = templateVariable.default,
+            onValueChange = {
+                viewModel.onTemplateVariableDefaultChange(index, it)
+            },
+            label = { Text("Default") },
+            modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+        )
+    }
+}
+
+@Composable
+fun FilePannel(
+    viewModel : TemplateEditViewModel,
+    templateFile : TemplateFileViewModel
+) {
+    Column(
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+            .background(R.Color.cardBackground)
+            .padding(10.dp)
+    ) {
+        OutlinedTextField(
+            value = viewModel.templateFilePath.value.value,
+            onValueChange = {
+                viewModel.onTemplateFilePathChange(it)
+                //viewModel.templateFilePath.value = it
+            },
+            label = { Text("Path") },
+            isError = (viewModel.templateFilePath.value.error != null),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 5.dp)
+        )
+        if(viewModel.templateFilePath.value.error != null) {
+            Text(text = viewModel.templateFilePath.value.error ?: "", color = R.Color.errorText)
+        }
+
+        OutlinedTextField(
+            value = viewModel.templateFilePathDestination.value.value,
+            onValueChange = {
+                viewModel.onTemplateFilePathDestinationChange(it)
+                //viewModel.templateFilePathDestination.value = it
+            },
+            label = { Text("Path Destination") },
+            isError = (viewModel.templateFilePathDestination.value.error != null),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 5.dp)
+        )
+        if(viewModel.templateFilePathDestination.value.error != null) {
+            Text(text = viewModel.templateFilePathDestination.value.error ?: "", color = R.Color.errorText)
+        }
+
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp)
+                .weight(1f),
+            value = viewModel.templateFileData.value,
+            onValueChange = {
+                viewModel.templateFileData.value = it
+            }
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 40.dp)
+        ) {
+            Button(
+                modifier = Modifier,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = R.Color.deleteButtonBackground,
+                    contentColor = R.Color.deleteButtonText
+                ),
+                onClick = {
+                    viewModel.deleteTemplateFile(templateFile.id)
+                }
+            ) {
+                Text(text = "Delete")
+            }
+
+            Button(
+                modifier = Modifier,
+                enabled = (viewModel.isSaveEnabled.value),
+                onClick = {
+                    viewModel.saveTemplateFile(templateFile.id)
+                }
+            ) {
+                Text(text = "Save")
+            }
+        }
+    }
+}
+

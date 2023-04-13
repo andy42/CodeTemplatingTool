@@ -7,18 +7,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.jaehl.codeTool.data.model.Template
 import com.jaehl.codeTool.data.model.TemplateFileOutput
 import com.jaehl.codeTool.ui.R
 import com.jaehl.codeTool.ui.component.AppBar
-import com.jaehl.codeTool.ui.component.PackagePickerDialog
 import com.jaehl.codeTool.ui.component.Picker
 
 @Composable
@@ -51,7 +48,7 @@ fun HomePage(
                         Text(text = "Templates", modifier = Modifier.align(alignment = Alignment.CenterVertically))
                         IconButton(
                             content = {
-                                Icon(Icons.Outlined.Settings, "Settings", tint = R.Color.primary)
+                                Icon(Icons.Outlined.Edit, "Edit", tint = R.Color.primary)
                             }, onClick = {
                                 onOpenTemplateList()
                             }
@@ -65,18 +62,6 @@ fun HomePage(
                 }
                 MainPannel(viewModel)
             }
-        }
-        if (viewModel.isPackagePickerDialogOpen.value) {
-            PackagePickerDialog(
-                title = "Select Package",
-                packageList = viewModel.packages,
-                onPackageClick = { item ->
-                    viewModel.onSelectedPackageClick(item)
-                },
-                onClose = {
-                    viewModel.onClosePackagePickerDialog()
-                }
-            )
         }
     }
 }
@@ -92,12 +77,12 @@ fun MainPannel(
         .padding(start = 10.dp, end = 10.dp)
         .verticalScroll(state)
     ) {
-        viewModel.variables.forEach{ variable ->
+        viewModel.variables.forEachIndexed{ index, variable ->
             when(variable) {
                 is HomeViewModel.VariableString -> {
                     OutlinedTextField(
                         value = variable.value,
-                        onValueChange = {viewModel.onVariableStringChange(variable.name, it)},
+                        onValueChange = {viewModel.onVariableStringChange(index, it)},
                         label = { Text(variable.name) },
                         modifier = Modifier.width(200.dp).padding(top = 5.dp)
                     )
@@ -105,9 +90,9 @@ fun MainPannel(
                 is HomeViewModel.VariablePackage -> {
                     Picker(
                         title = variable.name,
-                        value = variable.stringValue,
+                        value = variable.value,
                         onClick = {
-                            viewModel.onOpenPackagePickerDialog(variable.name)
+                            viewModel.onOpenPackagePickerDialog(index, variable.name)
                         },
                         modifier = Modifier.width(200.dp).padding(top = 5.dp)
                     )

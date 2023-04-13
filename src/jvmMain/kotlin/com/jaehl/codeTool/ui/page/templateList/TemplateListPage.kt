@@ -1,58 +1,65 @@
 package com.jaehl.codeTool.ui.page.templateList
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jaehl.codeTool.data.model.Template
-import com.jaehl.codeTool.data.repo.TemplateRepo
 import com.jaehl.codeTool.ui.R
 import com.jaehl.codeTool.ui.component.AppBar
-import com.jaehl.codeTool.ui.page.home.HomeViewModel
-import com.jaehl.codeTool.ui.page.home.TemplateRow
 
 @Composable
 fun TemplateListPage(
     viewModel : TemplateListViewModel,
     onGoBackClicked: () -> Unit
 ) {
-    Box {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(R.Color.pageBackground)
+    ) {
+        AppBar(
+            title = "Templates",
+            returnButton = true,
+            onBackClick = {
+                onGoBackClicked()
+            }
+        )
+        val state : ScrollState = rememberScrollState()
+
         Column(
             modifier = Modifier
-                .background(R.Color.pageBackground)
+                .align(alignment = Alignment.CenterHorizontally)
+                .width(400.dp)
         ) {
-            AppBar(
-                title = "TemplateList",
-                returnButton = true,
-                onBackClick = {
-                    onGoBackClicked()
-                }
-            )
-            Column {
-                TemplateList(
-                    viewModel = viewModel,
-                    templates = viewModel.templates
-                )
+            Button(
+                modifier = Modifier
+                    .align(alignment = Alignment.CenterHorizontally)
+                    .padding(top = 10.dp),
+                onClick = {
+                    viewModel.onTemplateAddClick()
+                },
+            ) {
+                Text(text = "Add Template")
             }
-        }
-    }
-}
-
-@Composable
-fun TemplateList(
-    viewModel : TemplateListViewModel,
-    templates : List<Template>
-){
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        itemsIndexed(templates) { index, template ->
-            TemplateRow(viewModel, index, template)
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+            ) {
+                itemsIndexed(viewModel.templates) { index, template ->
+                    TemplateRow(viewModel, index, template)
+                }
+            }
         }
     }
 }
@@ -63,14 +70,20 @@ fun TemplateRow(
     index : Int,
     template : Template
 ){
-    Text(
-        text = template.name,
+    Box(
         modifier = Modifier
             .fillMaxWidth()
+            .height(40.dp)
+            .background(R.Color.cardTitleBackground)
             .clickable {
                 viewModel.onTemplateSelectClick(template)
             }
-            //.background(if (index == selectedTemplateIndex) R.Color.rowBackgroundEven else R.Color.rowBackgroundOdd)
-            .padding(start = 10.dp, top = 3.dp, bottom = 3.dp)
-    )
+    ){
+        Text(
+            text = template.name,
+            modifier = Modifier
+                .align(alignment = Alignment.CenterStart)
+                .padding(start = 10.dp, top = 3.dp, bottom = 3.dp)
+        )
+    }
 }

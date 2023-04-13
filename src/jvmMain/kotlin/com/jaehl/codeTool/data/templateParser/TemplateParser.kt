@@ -1,5 +1,6 @@
 package com.jaehl.codeTool.data.templateParser
 
+import com.jaehl.codeTool.data.model.Project
 import com.jaehl.codeTool.data.model.Template
 import com.jaehl.codeTool.data.model.TemplateFile
 import com.jaehl.codeTool.data.model.TemplateFileOutput
@@ -9,7 +10,7 @@ import java.nio.file.Path
 
 interface TemplateParser {
     fun parseString(value : String, variableValues : Map<String, String>) : String
-    fun parse(template : Template, variableValues : Map<String, String>) : List<TemplateFileOutput>
+    fun parse(project : Project, template : Template, variableValues : Map<String, String>) : List<TemplateFileOutput>
 }
 
 class TemplateParserImp(
@@ -25,22 +26,33 @@ class TemplateParserImp(
         return newValue
     }
 
-    fun parseTemplateFile(templateFile: TemplateFile, variableValues : Map<String, String>) : TemplateFileOutput {
-        logger.log(parseString(templateFile.path, variableValues))
+    private fun parseTemplateFile(
+        templateDir : String,
+        templateFile: TemplateFile,
+        projectDir: String,
+        variableValues : Map<String, String>) : TemplateFileOutput {
+
         return TemplateFileOutput(
-            path = parseString(templateFile.pathDestination, variableValues),
+            path = parseString(projectDir+templateFile.pathDestination, variableValues),
             data = parseString(
                 fileUtil.loadFile(
-                    Path.of(parseString(templateFile.path, variableValues))
+                    Path.of(parseString(templateDir+templateFile.path, variableValues))
                 ),
                 variableValues
             )
         )
     }
-    override fun parse(template : Template, variableValues : Map<String, String>) : List<TemplateFileOutput> {
+    override fun parse(project : Project, template : Template, variableValues : Map<String, String>) : List<TemplateFileOutput> {
+        val templateDir = System.getProperty("user.home") +pathSeparator+ "CodeTool"+ pathSeparator+ template.dirPath
         return template.files.map {
-            parseTemplateFile(it, variableValues)
+            parseTemplateFile(
+                templateDir= templateDir,
+                templateFile= it,
+                projectDir= project.projectPath,
+                variableValues= variableValues)
         }
     }
+
+    private val pathSeparator = fileUtil.getPathSeparator()
 }
 

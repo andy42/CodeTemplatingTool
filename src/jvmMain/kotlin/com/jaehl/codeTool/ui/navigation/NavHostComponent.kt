@@ -26,6 +26,8 @@ import com.jaehl.codeTool.ui.page.home.HomePageComponent
 import com.jaehl.codeTool.ui.page.projectEdit.ProjectEditComponent
 import com.jaehl.codeTool.ui.page.projectList.ProjectListComponent
 import com.jaehl.codeTool.ui.page.templateEdit.TemplateEditComponent
+import com.jaehl.codeTool.ui.page.templateEdit.TemplateEditValidator
+import com.jaehl.codeTool.ui.page.templateEdit.TemplateEditValidatorImp
 import com.jaehl.codeTool.ui.page.templateList.TemplateListComponent
 import com.jaehl.codeTool.ui.util.OsPathConverter
 import com.jaehl.codeTool.ui.util.OsPathConverterImp
@@ -39,7 +41,7 @@ class NavHostComponent(
 
     private val configuration : Configuration = ConfigurationImp()
     private val logger : Logger = Logger()
-    private val fileUtil: FileUtil = FileUtilImp()
+    private val fileUtil: FileUtil = FileUtilImp(logger)
     private val templateParser: TemplateParser = TemplateParserImp(fileUtil, logger)
 
     private val templateListFile : TemplateListFile = TemplateListFileImp(logger)
@@ -52,7 +54,9 @@ class NavHostComponent(
 
     private val osPathConverter : OsPathConverter = OsPathConverterImp()
 
-    private val templateRepo : TemplateRepo = TemplateRepo(logger, templateListLoader, osPathConverter)
+    private val templateRepo : TemplateRepo = TemplateRepo(logger, templateListLoader, osPathConverter, fileUtil)
+
+    private val templateEditValidator : TemplateEditValidator = TemplateEditValidatorImp(fileUtil, templateRepo)
 
     private val projectListLoader : ObjectListLoader<Project> = ObjectListJsonLoader(
         logger = logger,
@@ -63,11 +67,6 @@ class NavHostComponent(
     private val projectRepo : ProjectRepo = ProjectRepo(logger, projectListLoader, osPathConverter)
 
     private val templateCreator : TemplateCreator = TemplateCreatorImp(fileUtil, logger)
-
-//    private val router = router<ScreenConfig, Component>(
-//        initialConfiguration = ScreenConfig.ProjectList,
-//        childFactory = ::createScreenComponent
-//    )
 
     private val navigation = StackNavigation<ScreenConfig>()
 
@@ -110,6 +109,7 @@ class NavHostComponent(
                 projectRepo,
                 ::onProjectSelected,
                 ::onProjectEdit,
+                onTemplatesEdit = ::onOpenTemplateList,
                 ::onGoBackClicked
             )
             is ScreenConfig.TemplateList -> TemplateListComponent(
@@ -124,12 +124,14 @@ class NavHostComponent(
                 logger,
                 fileUtil,
                 templateRepo,
+                templateEditValidator,
+                screenConfig.template,
                 ::onGoBackClicked
             )
         }
     }
 
-    private fun onOpenTemplateEdit(template : Template){
+    private fun onOpenTemplateEdit(template : Template?){
         navigation.push(ScreenConfig.TemplateEdit(template))
     }
     private fun onOpenTemplateList(){
@@ -150,10 +152,6 @@ class NavHostComponent(
     @OptIn(ExperimentalDecomposeApi::class)
     @Composable
     override fun render() {
-//        Children(routerState = router.state) {
-//            it.instance.render()
-//        }
-
         Children(stack = _childStack, modifier = Modifier){
             it.instance.render()
         }
@@ -164,7 +162,7 @@ class NavHostComponent(
         object ProjectList : ScreenConfig()
         object TemplateList : ScreenConfig()
 
-        data class TemplateEdit(val template: Template) : ScreenConfig()
+        data class TemplateEdit(val template: Template?) : ScreenConfig()
 
         data class ProjectEdit(val project: Project?) : ScreenConfig()
     }

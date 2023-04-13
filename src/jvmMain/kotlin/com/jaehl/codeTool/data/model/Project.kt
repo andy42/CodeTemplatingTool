@@ -6,8 +6,6 @@ data class Project(
     var id : String = "",
     var name : String = "",
     var projectPath : String = "",
-    var kotlinSrcPath : String = "",
-    var mainPackage : String = "",
     var variable : List<ProjectVariable> = listOf()
 )
 
@@ -30,9 +28,14 @@ data class ProjectVariable(
                     value = osPathConverter.convertPath("/src/jvmTest/kotlin")
                 ),
                 ProjectVariable(
+                    name = "mainPackagePath",
+                    type = TemplateVariableType.Path,
+                    value = osPathConverter.convertPath("/com/example/projectName")
+                ),
+                ProjectVariable(
                     name = "mainPackage",
                     type = TemplateVariableType.Package,
-                    value = osPathConverter.convertPath("/com/example/projectName")
+                    value = osPathConverter.convertPath("com.example.projectName")
                 )
             )
         }
