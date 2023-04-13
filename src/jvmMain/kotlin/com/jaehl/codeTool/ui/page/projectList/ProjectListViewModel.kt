@@ -14,6 +14,7 @@ class ProjectListViewModel(
     private val projectRepo : ProjectRepo,
     private val onProjectSelected: (project : Project) -> Unit,
     private val onProjectEdit : (project : Project?) -> Unit,
+    private val onTemplatesEdit : () -> Unit
 ) : ViewModel() {
 
     var projects = mutableStateListOf<Project>()
@@ -37,5 +38,9 @@ class ProjectListViewModel(
     }
     fun onProjectEditClick(project : Project) = viewModelScope.launch {
         onProjectEdit(project)
+    }
+
+    fun onTemplatesEditClick() = viewModelScope.launch {
+        onTemplatesEdit()
     }
 }

@@ -6,8 +6,6 @@ data class Project(
     var id : String = "",
     var name : String = "",
     var projectPath : String = "",
-    var kotlinSrcPath : String = "",
-    var mainPackage : String = "",
     var variable : List<ProjectVariable> = listOf()
 )
 

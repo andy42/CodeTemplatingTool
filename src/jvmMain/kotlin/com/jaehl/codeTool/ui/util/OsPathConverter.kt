@@ -44,17 +44,20 @@ class OsPathConverterImp :  OsPathConverter{
             id = project.id,
             name = project.name,
             projectPath = convertPath(project.projectPath),
-            kotlinSrcPath = convertPath(project.kotlinSrcPath),
-            mainPackage = convertPath(project.mainPackage),
             variable = project.variable.map { convertProjectVariable(it) }
         )
     }
 
     private fun convertTemplateVariable(templateVariable : TemplateVariable) : TemplateVariable {
         return when(templateVariable.type){
-            TemplateVariableType.Path,  TemplateVariableType.Package -> TemplateVariable(
+            TemplateVariableType.Path -> TemplateVariable(
                 name = templateVariable.name,
                 type = templateVariable.type,
+            )
+            TemplateVariableType.Package -> TemplateVariable(
+                name = templateVariable.name,
+                type = templateVariable.type,
+                startPath = templateVariable.startPath
             )
             else -> TemplateVariable(
                 name = templateVariable.name,
@@ -74,7 +77,7 @@ class OsPathConverterImp :  OsPathConverter{
         return Template(
             id = template.id,
             name = template.name,
-            dirPath = template.dirPath,
+            dirPath = convertPath(template.dirPath),
             variable = template.variable.map { convertTemplateVariable(it) },
             files = template.files.map { convertTemplateFile(it) }
         )

@@ -15,16 +15,15 @@ import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.nio.file.Files
 import java.nio.file.Path
-import java.util.stream.Collectors
 
 class HomeViewModel(
     private val logger : Logger,
     private val fileUtil : FileUtil,
     private val templateParser: TemplateParser,
     private val templateCreator : TemplateCreator,
-    private val templateRepo : TemplateRepo
+    private val templateRepo : TemplateRepo,
+    private val showFolderPickerDialog : (requestId : String, startPath : String) -> Unit
 ) : ViewModel() {
 
     private lateinit var project : Project
@@ -39,25 +38,8 @@ class HomeViewModel(
 
     var variables = mutableStateListOf<Variable>()
 
-    private var selectedVariablePackageName = ""
-
-    var isPackagePickerDialogOpen = mutableStateOf<Boolean>(false)
-        private set
-
-    var packages = mutableStateListOf<PackageData>()
-        private set
-
     var templates = mutableStateListOf<Template>()
         private set
-
-    private fun getFolders(srcPath : Path) : List<Path>{
-        var result: List<Path?>
-        Files.walk(srcPath).use { walk ->
-            result = walk.filter(Files::isDirectory)
-                .collect(Collectors.toList())
-        }
-        return result.filterNotNull()
-    }
 
     fun init(viewModelScope: CoroutineScope, project : Project) {
         super.init(viewModelScope)
@@ -76,32 +58,50 @@ class HomeViewModel(
                     if (it.value.isEmpty()) return false
                 }
                 is VariablePackage -> {
-                    if (it.packageImport.isEmpty()) return false
+                    if (it.value.isEmpty()) return false
                 }
             }
         }
         return true
     }
 
-    private fun parseTemplate() : List<TemplateFileOutput>{
-        var values = hashMapOf<String, String>(
-            "USER_DIR" to System.getProperty("user.home")
-        )
-        values["TEMPLATE_DIR"] = templateParser.parseString(template!!.dirPath, values)
-        values["projectPackage"] = project.mainPackage.replace("\\", ".").substring(1)
+    private fun convertToImport(path : String) : String {
+        return path.replace(fileUtil.getPathSeparator(), ".").substring(1)
+    }
 
-        variables.toList().forEach {
-            when(it) {
-                is VariableString -> {
-                    values[it.name] = if(!it.value.isNullOrBlank()) it.value else "{{${it.name}}}"
+    private fun createProjectVariables() : HashMap<String, String>{
+        var values = hashMapOf<String, String>()
+
+        project.variable.forEach {variable ->
+            when(variable.type) {
+                TemplateVariableType.Package -> {
+                    values[variable.name] = variable.value
+                    values["${variable.name}\$import"] = convertToImport(variable.value)
                 }
-                is VariablePackage -> {
-                    values["${it.name}Import"] = if(!it.packageImport.isNullOrBlank()) it.packageImport else "{{${it.name}}}"
-                    values["${it.name}Path"] = if(!it.path.toString().isNullOrBlank()) it.path.toString()  else "{{${it.name}}}"
+                else -> {
+                    values[variable.name] = variable.value
                 }
             }
         }
-        return templateParser.parse(template!!, values)
+        return values
+    }
+
+    private fun parseTemplate() : List<TemplateFileOutput>{
+
+        var values = createProjectVariables()
+
+        variables.toList().forEach { variable ->
+            when(variable) {
+                is VariableString -> {
+                    values[variable.name] = if(!variable.value.isNullOrBlank()) variable.value else "{{${variable.name}}}"
+                }
+                is VariablePackage -> {
+                    values["${variable.name}"] = if(!variable.value.isNullOrBlank()) variable.value else "{{${variable.name}}}"
+                    values["${variable.name}\$import"] = if(!variable.value.isNullOrBlank()) convertToImport(variable.value) else "{{${variable.name}}}"
+                }
+            }
+        }
+        return templateParser.parse(project, template!!, values)
     }
 
     private fun onGenerateTemplate() = viewModelScope.launch {
@@ -119,12 +119,20 @@ class HomeViewModel(
     }
 
     fun onTemplateSelectClick(newTemplate : Template, index : Int) = viewModelScope.launch {
+
+        var values = createProjectVariables()
+
         selectedTemplateIndex.value = index
         template = newTemplate
         val tempVariable = newTemplate.variable.map {
             return@map when (it.type){
                 TemplateVariableType.Package -> {
-                    VariablePackage(it.name, "", Path.of(""), "")
+                    VariablePackage(
+                        name = it.name,
+                        value = "",
+                        startPath = templateParser.parseString(
+                            project.projectPath+it.startPath,
+                            values))
                 }
                 else ->{
                     VariableString(it.name, it.default)
@@ -136,46 +144,26 @@ class HomeViewModel(
         onGenerateTemplate()
     }
 
-    fun onVariableStringChange(name : String, value : String) = viewModelScope.launch {
+    fun onVariableStringChange(index : Int, value : String) = viewModelScope.launch {
+        val variableString = (variables[index] as? VariableString) ?: return@launch
+        variables[index] = variableString.copy(value = value)
+
+        viewModelScope.launch {
+            onGenerateTemplate()
+        }
+    }
+
+    fun onOpenPackagePickerDialog(index : Int, variableName : String) = viewModelScope.launch {
         val temp = variables.toList()
-        (temp.firstOrNull{it.name == name} as? VariableString)?.value = value
-        variables.postSwap(temp)
-        onGenerateTemplate()
+        val startPath = (temp[index] as? VariablePackage)?.startPath ?: return@launch
+        showFolderPickerDialog(variableName, startPath)
     }
 
-    fun onOpenPackagePickerDialog(variableName : String) = viewModelScope.launch {
-        val packagePath = Path.of(project.projectPath+project.kotlinSrcPath+project.mainPackage)
-        val srcPathPath = Path.of(project.projectPath+project.kotlinSrcPath)
-        val packageList = getFolders(packagePath)
-            .mapNotNull {
-                return@mapNotNull if(packagePath.count() == it.count()) null
-                else PackageData(
-                    path = it,
-                    packageImport = it.subpath(srcPathPath.count(), it.count()).toString().replace("\\", "."),
-                    name = it.subpath(packagePath.count(), it.count()).toString()
-                )
-            }
-        selectedVariablePackageName = variableName
-        packages.postSwap(packageList)
-        isPackagePickerDialogOpen.value = true
-    }
-
-    fun onClosePackagePickerDialog() = viewModelScope.launch {
-        isPackagePickerDialogOpen.value = false
-        selectedVariablePackageName = ""
-    }
-
-    fun onSelectedPackageClick(packageData : PackageData) = viewModelScope.launch {
-        isPackagePickerDialogOpen.value = false
-
+    fun onProjectPathChange(requestId : String, path : String) = viewModelScope.launch {
         val temp = variables.toList()
-        val tempVariablePackage = temp.firstOrNull{it.name == selectedVariablePackageName} as? VariablePackage
-        tempVariablePackage?.stringValue = packageData.name
-        tempVariablePackage?.path = packageData.path
-        tempVariablePackage?.packageImport = packageData.packageImport
+        val tempVariablePackage = temp.firstOrNull{it.name == requestId} as? VariablePackage
+        tempVariablePackage?.value = path
         variables.postSwap(temp)
-
-        selectedVariablePackageName = ""
         onGenerateTemplate()
     }
 
@@ -192,12 +180,18 @@ class HomeViewModel(
     class VariableString(
         name : String,
         var value : String = ""
-    ) : Variable(name)
+    ) : Variable(name) {
+        fun copy(name : String? = null, value : String? = null) : VariableString {
+            return VariableString(
+                name = name ?: this.name,
+                value = value ?: this.value,
+            )
+        }
+    }
 
     class VariablePackage(
         name : String,
-        var stringValue : String,
-        var path : Path,
-        var packageImport : String
+        var value : String,
+        var startPath : String
     ) : Variable(name)
 }

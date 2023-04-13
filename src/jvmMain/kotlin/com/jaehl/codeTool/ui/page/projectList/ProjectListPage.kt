@@ -60,6 +60,16 @@ fun ProjectListPage(
                         ProjectRow(viewModel, index, project)
                     }
                 }
+                Button(
+                    modifier = Modifier
+                        .align(alignment = Alignment.CenterHorizontally)
+                        .padding(top = 20.dp),
+                    onClick = {
+                        viewModel.onTemplatesEditClick()
+                    },
+                ) {
+                    Text(text = "Edit Templates")
+                }
             }
         }
     }
@@ -84,7 +94,6 @@ fun ProjectRow(
             text = project.name,
             modifier = Modifier
                 .align(alignment = Alignment.CenterStart)
-                //.background(if (index == selectedTemplateIndex) R.Color.rowBackgroundEven else R.Color.rowBackgroundOdd)
                 .padding(start = 10.dp, top = 3.dp, bottom = 3.dp)
         )
         IconButton(

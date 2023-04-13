@@ -18,6 +18,8 @@ object R {
         val textDark = Color(0xff000000)
         val textLight = Color(0xffffffff)
 
+        val dividerColor = Color(0xffadadad)
+
         val pageBackground = Color(0xffededed)
         val cardBackground = Color(0xffffffff)
         val cardTitleBackground = Color(0xffdedede)
@@ -29,6 +31,7 @@ object R {
 
         val deleteButton = Color(0xfffa4932)
 
+        val errorText = Color(0xffc23838)
 
         val debugRed = Color(0xffff0000)
         val debugGreen = Color(0xff00ff00)
@@ -38,5 +41,8 @@ object R {
 
         val rowHoverBackground = Color(0x11000000)
         val rowActiveBackground = primary
+
+        var deleteButtonBackground = Color(0xffc23838)
+        var deleteButtonText = Color(0xffffffff)
     }
 }

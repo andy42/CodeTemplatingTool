@@ -46,30 +46,23 @@ class ProjectEditViewModel(
 
     fun onProjectNameChange(value : String) = viewModelScope.launch {
         projectName.value = value
-
         isSaveEnabled.value = validateProject()
     }
 
-    fun onProjectVariableNameChange(index : Int, name : String) = viewModelScope.launch {
-        var projectVariables = this@ProjectEditViewModel.projectVariables.toMutableList()
-        projectVariables[index]?.name = name
-        this@ProjectEditViewModel.projectVariables.postSwap(projectVariables)
+    fun onProjectVariableNameChange(index : Int, name : String) {
+        projectVariables[index] = projectVariables[index].copy(name = name)
     }
 
     fun onProjectVariableTypeClick(index : Int) = viewModelScope.launch {
         showListPickerDialog(index)
     }
 
-    fun onProjectVariableTypeChange(index : Int, type : TemplateVariableType) = viewModelScope.launch {
-        var projectVariables = this@ProjectEditViewModel.projectVariables.toMutableList()
-        projectVariables[index]?.type = type
-        this@ProjectEditViewModel.projectVariables.postSwap(projectVariables)
+    fun onProjectVariableTypeChange(index : Int, type : TemplateVariableType) {
+        projectVariables[index] = projectVariables[index].copy(type = type)
     }
 
-    fun onProjectVariableValueChange(index : Int, value : String) = viewModelScope.launch {
-        var projectVariables = this@ProjectEditViewModel.projectVariables.toMutableList()
-        projectVariables[index]?.value = value
-        this@ProjectEditViewModel.projectVariables.postSwap(projectVariables)
+    fun onProjectVariableValueChange(index : Int, value : String) {
+        projectVariables[index] = projectVariables[index].copy(value = value)
     }
 
     fun onProjectVariableDelete(index : Int) = viewModelScope.launch {
@@ -98,7 +91,7 @@ class ProjectEditViewModel(
         projectVariables.add(projectVariable)
     }
 
-    fun onProjectPathChange(requestId : String, path : String) = viewModelScope.launch {
+    fun onProjectPathChange(requestId : String, path : String) {
         projectPath.value = path
         isSaveEnabled.value = validateProject()
     }
