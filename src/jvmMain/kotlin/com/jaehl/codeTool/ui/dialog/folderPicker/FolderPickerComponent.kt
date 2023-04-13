@@ -15,6 +15,7 @@ class FolderPickerDialogComponent(
     private val requestId : String,
     private val onDismissed : () -> Unit,
     private val startPath : String? = null,
+    private val subPathOnly : Boolean = false,
     private val onSelect : ((requestId : String, selectedFolder : String) -> Unit)? = null,
     private val onSelectMulti : ((requestId : String, selectedFolder : List<String>) -> Unit)? = null,
     private val foldersOnly : Boolean = false
@@ -26,6 +27,7 @@ class FolderPickerDialogComponent(
         requestId,
         onDismissed,
         startPath = startPath,
+        subPathOnly = subPathOnly,
         onSelect = onSelect,
         onSelectMulti = onSelectMulti,
         foldersOnly = foldersOnly
