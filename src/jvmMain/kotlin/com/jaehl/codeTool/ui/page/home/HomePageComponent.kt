@@ -49,6 +49,7 @@ class HomePageComponent(
                         onDismissed = {
                             dialogNavigation.dismiss()
                         },
+                        subPathOnly = true,
                         startPath = config.startPath,
                         onSelect = { requestId, path ->
                             viewModel.onProjectPathChange(requestId, path.replace(config.startPath, ""))

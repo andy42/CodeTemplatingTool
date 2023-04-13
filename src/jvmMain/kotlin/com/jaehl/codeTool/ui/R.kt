@@ -39,8 +39,14 @@ object R {
 
         val transparent = Color(0x00000000)
 
+        val disabledBackground = Color(0xffbababa)
+
+        val rowBackground = Color(0x00000000)
+        val rowText = textDark
         val rowHoverBackground = Color(0x11000000)
-        val rowActiveBackground = primary
+        val rowHoverText = Color(0xff000000)
+        val rowSelectedBackground = primary
+        val rowSelectedText = textLight
 
         var deleteButtonBackground = Color(0xffc23838)
         var deleteButtonText = Color(0xffffffff)

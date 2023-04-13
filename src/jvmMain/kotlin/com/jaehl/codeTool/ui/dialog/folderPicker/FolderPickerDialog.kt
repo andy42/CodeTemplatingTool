@@ -26,7 +26,6 @@ fun FolderPickerPage(
     ) {
         Column(
             modifier = Modifier
-                //.padding(top = 20.dp)
                 .width(800.dp)
                 .height(900.dp)
                 .background(R.Color.pageBackground)
@@ -41,16 +40,20 @@ fun FolderPickerPage(
             Row(
                 modifier = Modifier.padding(5.dp)
             ) {
-                FolderChip(
-                    viewModel = viewModel,
-                    name = "...",
-                    index = -1
-                )
-                viewModel.folderPath.forEachIndexed{ index, name ->
-                    FolderChip(
+                if(!viewModel.subPathOnly) {
+                    FolderBreadcrumbChip(
                         viewModel = viewModel,
-                        name = name,
-                        index = index
+                        name = "...",
+                        pathIndex = -1,
+                        selectable = true
+                    )
+                }
+                viewModel.folderBreadcrumb.forEach{ item ->
+                    FolderBreadcrumbChip(
+                        viewModel = viewModel,
+                        name = item.name,
+                        pathIndex = item.pathIndex,
+                        selectable = item.selectable
                     )
                 }
             }
@@ -80,18 +83,21 @@ fun FolderPickerPage(
 }
 
 @Composable
-fun FolderChip(
+fun FolderBreadcrumbChip(
     viewModel : FolderPickerViewModel,
     name : String,
-    index : Int
+    pathIndex : Int,
+    selectable : Boolean
 ){
     Box(
         modifier = Modifier
             .clickable {
-                viewModel.selectPreviewsFolder(index)
+                if(selectable) {
+                    viewModel.selectPreviewsFolder(pathIndex)
+                }
             }
             .padding(start = 5.dp)
-            .background(R.Color.primary)
+            .background(if(selectable) R.Color.primary else R.Color.disabledBackground)
     ) {
         Text(
             text = name,
@@ -137,7 +143,7 @@ fun FolderItemRow(
                     viewModel.selectFolder(folderItem)
                 }
             )
-            .background(if (selectedFolders.contains(folderItem.path)) R.Color.rowBackgroundEven else R.Color.rowBackgroundOdd)
+            .background(if (selectedFolders.contains(folderItem.path)) R.Color.rowSelectedBackground else R.Color.rowBackground)
             .padding(start = 10.dp, top = 3.dp, bottom = 3.dp)
     ) {
         val folder = remember { useResource("folder.png") { loadImageBitmap(it) }}
@@ -155,7 +161,8 @@ fun FolderItemRow(
             text = folderItem.name,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp, top = 3.dp, bottom = 3.dp)
+                .padding(start = 10.dp, top = 3.dp, bottom = 3.dp),
+            color = if (selectedFolders.contains(folderItem.path)) R.Color.rowSelectedText else R.Color.rowText
         )
     }
 }

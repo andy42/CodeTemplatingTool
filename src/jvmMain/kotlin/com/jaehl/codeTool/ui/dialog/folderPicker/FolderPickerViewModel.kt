@@ -16,13 +16,16 @@ class FolderPickerViewModel(
     private val requestId : String,
     private val onDismissed : () -> Unit,
     private val startPath : String?,
+    var subPathOnly : Boolean,
     private val onSelect : ((requestId : String, selectedFolder :  String) -> Unit)?,
     private val onSelectMulti : ((requestId : String, selectedFolders : List<String>) -> Unit)?,
     private val foldersOnly : Boolean
 ) : ViewModel() {
 
+    //the currently selected folder path
     private var folderPathList = ArrayList<String>()
-    var folderPath = mutableStateListOf<String>()
+
+    var folderBreadcrumb = mutableStateListOf<FolderBreadcrumbItem>()
         private set
 
     var folderItems = mutableStateListOf<FolderItem>()
@@ -31,13 +34,29 @@ class FolderPickerViewModel(
     var selectedFolders = mutableStateListOf<String>()
         private set
 
+    var subPathStartIndex = 0
+
+    private suspend fun updateFolderBreadcrumb() {
+        var newBreadcrumb = folderPathList.mapIndexed{ index, name ->
+            FolderBreadcrumbItem(
+                pathIndex = index,
+                name = name,
+                selectable = if(subPathOnly) (index >= subPathStartIndex )else true
+            )
+        }.takeLast(4)
+
+        folderBreadcrumb.postSwap(
+            newBreadcrumb
+        )
+    }
     override fun init(viewModelScope: CoroutineScope) {
         super.init(viewModelScope)
 
         viewModelScope.launch {
             if(startPath != null){
                 folderPathList = ArrayList(startPath.split(File.separator))
-                folderPath.postSwap(folderPathList)
+                subPathStartIndex = folderPathList.size -1
+                updateFolderBreadcrumb()
                 selectedFolders.clear()
                 updateFolderItems()
             } else {
@@ -70,27 +89,24 @@ class FolderPickerViewModel(
         folderItems.postSwap(items)
     }
 
-    fun selectFolder(folderItem : FolderItem) = viewModelScope.launch {
-
-        val newSelectedFolders = selectedFolders.toMutableList()
+    fun selectFolder(folderItem : FolderItem) {
 
         if(onSelectMulti != null){
-            if(newSelectedFolders.contains(folderItem.path)){
-                newSelectedFolders.remove(folderItem.path)
+            if(selectedFolders.contains(folderItem.path)){
+                selectedFolders.remove(folderItem.path)
             } else {
-                newSelectedFolders.add(folderItem.path)
+                selectedFolders.add(folderItem.path)
             }
         } else {
-            newSelectedFolders.clear()
-            newSelectedFolders.add(folderItem.path)
+            selectedFolders.clear()
+            selectedFolders.add(folderItem.path)
         }
-        selectedFolders.postSwap(newSelectedFolders)
     }
 
     fun expandFolder(folderItem : FolderItem) = viewModelScope.launch {
         if(!folderItem.isFolder) return@launch
         folderPathList.add(folderItem.name)
-        folderPath.postSwap(folderPathList)
+        updateFolderBreadcrumb()
         if(onSelectMulti == null){
             selectedFolders.clear()
         }
@@ -100,7 +116,7 @@ class FolderPickerViewModel(
 
     private suspend fun showRootDrives(){
         folderPathList.clear()
-        folderPath.postSwap(folderPathList)
+        updateFolderBreadcrumb()
         folderItems.postSwap(
             fileUtil.getRootDirectories().map { FolderItem(name = it, path = it, isFolder = true) }
         )
@@ -114,7 +130,7 @@ class FolderPickerViewModel(
         }
 
         folderPathList = ArrayList(folderPathList.subList(0, index+1))
-        folderPath.postSwap(folderPathList)
+        updateFolderBreadcrumb()
         selectedFolders.clear()
         updateFolderItems()
     }
@@ -130,4 +146,10 @@ data class FolderItem(
     val name : String,
     val path : String,
     val isFolder : Boolean
+)
+
+data class FolderBreadcrumbItem(
+    val pathIndex : Int,
+    val name : String,
+    val selectable : Boolean
 )

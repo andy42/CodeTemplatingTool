@@ -72,6 +72,9 @@ fun NavView(
             .width(250.dp)
     ) {
         NavRowTitle(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
             title = "General Info",
             iconBitmap = null,
             selected = (viewModel.selectedNavRow.value is TemplateEditViewModel.NavRowSelect.NavRowGeneralInfoSelect),
@@ -81,6 +84,9 @@ fun NavView(
         )
 
         NavRowHeading(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp, start = 10.dp),
             title = "Files",
             icon = Icons.Outlined.Add,
             onIconClick = {
@@ -91,6 +97,8 @@ fun NavView(
         viewModel.files.forEachIndexed { index, file ->
             val navRowFileSelect = (viewModel.selectedNavRow.value as? TemplateEditViewModel.NavRowSelect.NavRowFileSelect)
             NavRowTitle(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 title = file.name,
                 iconBitmap = fileBitmap,
                 selected = (navRowFileSelect?.index == index),
@@ -104,14 +112,13 @@ fun NavView(
 
 @Composable
 fun NavRowHeading(
+    modifier: Modifier,
     title : String,
     icon : ImageVector? = null,
     onIconClick : (() -> Unit)? = null
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp, start = 10.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -140,27 +147,26 @@ fun NavRowHeading(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun NavRowTitle(
+    modifier: Modifier,
     title : String,
     iconBitmap : ImageBitmap?,
     selected : Boolean,
     onClick : () -> Unit
 ) {
-    var active by remember { mutableStateOf(false) }
+    var hover by remember { mutableStateOf(false) }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-
+        modifier = modifier
             .background(
-                if (selected) R.Color.rowActiveBackground
-                else if (active) R.Color.rowHoverBackground
-                else R.Color.transparent
+                if (selected) R.Color.rowSelectedBackground
+                else if (hover) R.Color.rowHoverBackground
+                else R.Color.rowBackground
             )
             .onPointerEvent(PointerEventType.Enter) {
-                active = true
+                hover = true
             }
             .onPointerEvent(PointerEventType.Exit) {
-                active = false
+                hover = false
             }
             .clickable {
                 onClick()
@@ -173,9 +179,9 @@ fun NavRowTitle(
                 bitmap = iconBitmap,
                 "",
                 colorFilter = ColorFilter.tint(
-                    if (selected) R.Color.textLight
-                    else if (active) R.Color.textDark
-                    else R.Color.textDark
+                    if (selected) R.Color.rowSelectedText
+                    else if (hover) R.Color.rowHoverText
+                    else R.Color.rowText
                 ),
                 modifier = Modifier
                     .padding(start = 10.dp)
@@ -191,9 +197,9 @@ fun NavRowTitle(
 
                 .padding(start = 10.dp, top = 3.dp, bottom = 3.dp),
             color =
-                if (selected) R.Color.textLight
-                else if (active) R.Color.textDark
-                else R.Color.textDark,
+                if (selected) R.Color.rowSelectedText
+                else if (hover) R.Color.rowHoverText
+                else R.Color.rowText,
             maxLines = 1
         )
     }
