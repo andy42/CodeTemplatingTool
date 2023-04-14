@@ -41,6 +41,8 @@ object R {
 
         val disabledBackground = Color(0xffbababa)
 
+        val codeBlock = Color(0xffe0e0e0)
+
         val rowBackground = Color(0x00000000)
         val rowText = textDark
         val rowHoverBackground = Color(0x11000000)

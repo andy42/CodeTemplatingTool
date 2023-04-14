@@ -22,7 +22,7 @@ import com.jaehl.codeTool.data.templateCreator.TemplateCreator
 import com.jaehl.codeTool.data.templateCreator.TemplateCreatorImp
 import com.jaehl.codeTool.data.templateParser.TemplateParser
 import com.jaehl.codeTool.data.templateParser.TemplateParserImp
-import com.jaehl.codeTool.ui.page.home.HomePageComponent
+import com.jaehl.codeTool.ui.page.templateApply.TemplateApplyPageComponent
 import com.jaehl.codeTool.ui.page.projectEdit.ProjectEditComponent
 import com.jaehl.codeTool.ui.page.projectList.ProjectListComponent
 import com.jaehl.codeTool.ui.page.templateEdit.TemplateEditComponent
@@ -83,7 +83,7 @@ class NavHostComponent(
         componentContext: ComponentContext
     ): Component {
         return when (screenConfig) {
-            is ScreenConfig.Home -> HomePageComponent(
+            is ScreenConfig.TemplateApply -> TemplateApplyPageComponent(
                 componentContext,
                 logger,
                 fileUtil,
@@ -142,7 +142,7 @@ class NavHostComponent(
         navigation.push(ScreenConfig.ProjectEdit(project))
     }
     private fun onProjectSelected(project : Project){
-        navigation.push(ScreenConfig.Home(project))
+        navigation.push(ScreenConfig.TemplateApply(project))
     }
 
     private fun onGoBackClicked() {
@@ -158,7 +158,7 @@ class NavHostComponent(
     }
 
     private sealed class ScreenConfig : Parcelable {
-        data class Home(val project: Project) : ScreenConfig()
+        data class TemplateApply(val project: Project) : ScreenConfig()
         object ProjectList : ScreenConfig()
         object TemplateList : ScreenConfig()
 

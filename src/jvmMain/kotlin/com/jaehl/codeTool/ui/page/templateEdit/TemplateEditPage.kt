@@ -8,23 +8,14 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.useResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jaehl.codeTool.data.model.TemplateVariable
 import com.jaehl.codeTool.data.model.TemplateVariableType
 import com.jaehl.codeTool.ui.R
-import com.jaehl.codeTool.ui.component.AppBar
-import com.jaehl.codeTool.ui.component.Picker
-import com.jaehl.codeTool.ui.component.VerticalDivider
+import com.jaehl.codeTool.ui.component.*
 
 @Composable
 fun TemplateEditPage(
@@ -89,6 +80,7 @@ fun NavView(
                 .padding(top = 10.dp, start = 10.dp),
             title = "Files",
             icon = Icons.Outlined.Add,
+            iconDescription = "Add File",
             onIconClick = {
                 viewModel.addTemplateFile()
             }
@@ -107,101 +99,6 @@ fun NavView(
                 }
             )
         }
-    }
-}
-
-@Composable
-fun NavRowHeading(
-    modifier: Modifier,
-    title : String,
-    icon : ImageVector? = null,
-    onIconClick : (() -> Unit)? = null
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = title,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .background(R.Color.transparent)
-                .padding(top = 3.dp, bottom = 3.dp),
-            color = R.Color.textDark,
-            maxLines = 1
-        )
-        if(icon != null) {
-            IconButton(
-                modifier = Modifier,
-                content = {
-                    Icon(Icons.Outlined.Add, "Add File", tint = R.Color.textDark)
-                }, onClick = {
-                    onIconClick?.invoke()
-                }
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun NavRowTitle(
-    modifier: Modifier,
-    title : String,
-    iconBitmap : ImageBitmap?,
-    selected : Boolean,
-    onClick : () -> Unit
-) {
-    var hover by remember { mutableStateOf(false) }
-
-    Row(
-        modifier = modifier
-            .background(
-                if (selected) R.Color.rowSelectedBackground
-                else if (hover) R.Color.rowHoverBackground
-                else R.Color.rowBackground
-            )
-            .onPointerEvent(PointerEventType.Enter) {
-                hover = true
-            }
-            .onPointerEvent(PointerEventType.Exit) {
-                hover = false
-            }
-            .clickable {
-                onClick()
-
-            }
-            .padding(top = 5.dp, bottom = 5.dp)
-    ) {
-        if(iconBitmap != null) {
-            Image(
-                bitmap = iconBitmap,
-                "",
-                colorFilter = ColorFilter.tint(
-                    if (selected) R.Color.rowSelectedText
-                    else if (hover) R.Color.rowHoverText
-                    else R.Color.rowText
-                ),
-                modifier = Modifier
-                    .padding(start = 10.dp)
-                    .width(20.dp)
-                    .height(20.dp)
-                    .align(alignment = Alignment.CenterVertically)
-            )
-        }
-        Text(
-            text = title,
-            modifier = Modifier
-                .fillMaxWidth()
-
-                .padding(start = 10.dp, top = 3.dp, bottom = 3.dp),
-            color =
-                if (selected) R.Color.rowSelectedText
-                else if (hover) R.Color.rowHoverText
-                else R.Color.rowText,
-            maxLines = 1
-        )
     }
 }
 
@@ -346,7 +243,7 @@ fun TemplateVariable(
             modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
         )
 
-        if(templateVariable.type.value == TemplateVariableType.Package.value){
+        if(templateVariable.type.value == TemplateVariableType.Path.value){
             OutlinedTextField(
                 value = templateVariable.startPath,
                 onValueChange = {
@@ -384,7 +281,6 @@ fun FilePannel(
             value = viewModel.templateFilePath.value.value,
             onValueChange = {
                 viewModel.onTemplateFilePathChange(it)
-                //viewModel.templateFilePath.value = it
             },
             label = { Text("Path") },
             isError = (viewModel.templateFilePath.value.error != null),
@@ -400,7 +296,6 @@ fun FilePannel(
             value = viewModel.templateFilePathDestination.value.value,
             onValueChange = {
                 viewModel.onTemplateFilePathDestinationChange(it)
-                //viewModel.templateFilePathDestination.value = it
             },
             label = { Text("Path Destination") },
             isError = (viewModel.templateFilePathDestination.value.error != null),

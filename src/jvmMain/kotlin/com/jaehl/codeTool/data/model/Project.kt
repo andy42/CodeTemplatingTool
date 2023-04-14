@@ -34,7 +34,7 @@ data class ProjectVariable(
                 ),
                 ProjectVariable(
                     name = "mainPackage",
-                    type = TemplateVariableType.Package,
+                    type = TemplateVariableType.Path,
                     value = osPathConverter.convertPath("com.example.projectName")
                 )
             )

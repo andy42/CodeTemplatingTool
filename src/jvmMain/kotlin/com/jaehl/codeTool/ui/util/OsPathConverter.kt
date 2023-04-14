@@ -26,23 +26,15 @@ class OsPathConverterImp :  OsPathConverter{
 
     private fun convertProjectVariable(projectVariable : ProjectVariable) : ProjectVariable {
         return when(projectVariable.type){
-            TemplateVariableType.Path,  TemplateVariableType.Package -> ProjectVariable(
-                name = projectVariable.name,
-                type = projectVariable.type,
+            TemplateVariableType.Path -> projectVariable.copy(
                 value = convertPath(projectVariable.value)
             )
-            else -> ProjectVariable(
-                name = projectVariable.name,
-                type = projectVariable.type,
-                value = projectVariable.value
-            )
+            else -> projectVariable.copy()
         }
     }
 
     override fun convertPathsToOsFormat(project : Project) : Project {
-        return Project(
-            id = project.id,
-            name = project.name,
+        return project.copy(
             projectPath = convertPath(project.projectPath),
             variable = project.variable.map { convertProjectVariable(it) }
         )
@@ -50,33 +42,20 @@ class OsPathConverterImp :  OsPathConverter{
 
     private fun convertTemplateVariable(templateVariable : TemplateVariable) : TemplateVariable {
         return when(templateVariable.type){
-            TemplateVariableType.Path -> TemplateVariable(
-                name = templateVariable.name,
-                type = templateVariable.type,
-            )
-            TemplateVariableType.Package -> TemplateVariable(
-                name = templateVariable.name,
-                type = templateVariable.type,
-                startPath = templateVariable.startPath
-            )
-            else -> TemplateVariable(
-                name = templateVariable.name,
-                type = templateVariable.type,
-            )
+            TemplateVariableType.Path -> templateVariable.copy()
+            else -> templateVariable.copy()
         }
     }
 
     private fun convertTemplateFile(templateFile : TemplateFile) : TemplateFile {
-        return TemplateFile(
+        return templateFile.copy(
             path = convertPath(templateFile.path),
             pathDestination = convertPath(templateFile.pathDestination),
         )
     }
 
     override fun convertPathsToOsFormat(template : Template) : Template {
-        return Template(
-            id = template.id,
-            name = template.name,
+        return template.copy(
             dirPath = convertPath(template.dirPath),
             variable = template.variable.map { convertTemplateVariable(it) },
             files = template.files.map { convertTemplateFile(it) }

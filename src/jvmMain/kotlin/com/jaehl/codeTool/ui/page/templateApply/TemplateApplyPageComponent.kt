@@ -1,4 +1,4 @@
-package com.jaehl.codeTool.ui.page.home
+package com.jaehl.codeTool.ui.page.templateApply
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,7 +19,7 @@ import com.jaehl.codeTool.ui.navigation.Component
 import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.Logger
 
-class HomePageComponent(
+class TemplateApplyPageComponent(
     private val componentContext: ComponentContext,
     private val logger : Logger,
     private val fileUtil : FileUtil,
@@ -31,7 +31,7 @@ class HomePageComponent(
     private val onOpenTemplateList: () -> Unit
 ) : Component, ComponentContext by componentContext {
 
-    private val viewModel = HomeViewModel(logger, fileUtil, templateParser, templateCreator, templateRepo, ::showFolderPickerDialog)
+    private val viewModel = TemplateApplyViewModel(logger, fileUtil, templateParser, templateCreator, templateRepo, ::showFolderPickerDialog)
     private val dialogNavigation = OverlayNavigation<DialogConfig>()
 
     private val _dialog =
