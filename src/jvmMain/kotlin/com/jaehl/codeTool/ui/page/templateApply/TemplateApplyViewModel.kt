@@ -1,4 +1,4 @@
-package com.jaehl.codeTool.ui.page.home
+package com.jaehl.codeTool.ui.page.templateApply
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -17,7 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.nio.file.Path
 
-class HomeViewModel(
+class TemplateApplyViewModel(
     private val logger : Logger,
     private val fileUtil : FileUtil,
     private val templateParser: TemplateParser,
@@ -47,6 +47,9 @@ class HomeViewModel(
         viewModelScope.launch {
             templateRepo.getTemplates().collect { templatesList ->
                 templates.postSwap(templatesList)
+                if(templatesList.isNotEmpty()) {
+                    onTemplateSelectClick(templatesList.first(), 0)
+                }
             }
         }
     }
@@ -57,7 +60,7 @@ class HomeViewModel(
                 is VariableString -> {
                     if (it.value.isEmpty()) return false
                 }
-                is VariablePackage -> {
+                is VariablePath -> {
                     if (it.value.isEmpty()) return false
                 }
             }
@@ -74,12 +77,9 @@ class HomeViewModel(
 
         project.variable.forEach {variable ->
             when(variable.type) {
-                TemplateVariableType.Package -> {
-                    values[variable.name] = variable.value
-                    values["${variable.name}\$import"] = convertToImport(variable.value)
-                }
                 else -> {
                     values[variable.name] = variable.value
+                    values["${variable.name}\$import"] = convertToImport(variable.value)
                 }
             }
         }
@@ -93,9 +93,10 @@ class HomeViewModel(
         variables.toList().forEach { variable ->
             when(variable) {
                 is VariableString -> {
-                    values[variable.name] = if(!variable.value.isNullOrBlank()) variable.value else "{{${variable.name}}}"
+                    values["${variable.name}"] = if(!variable.value.isNullOrBlank()) variable.value else "{{${variable.name}}}"
+                    values["${variable.name}\$import"] = if(!variable.value.isNullOrBlank()) convertToImport(variable.value) else "{{${variable.name}}}"
                 }
-                is VariablePackage -> {
+                is VariablePath -> {
                     values["${variable.name}"] = if(!variable.value.isNullOrBlank()) variable.value else "{{${variable.name}}}"
                     values["${variable.name}\$import"] = if(!variable.value.isNullOrBlank()) convertToImport(variable.value) else "{{${variable.name}}}"
                 }
@@ -126,8 +127,8 @@ class HomeViewModel(
         template = newTemplate
         val tempVariable = newTemplate.variable.map {
             return@map when (it.type){
-                TemplateVariableType.Package -> {
-                    VariablePackage(
+                TemplateVariableType.Path -> {
+                    VariablePath(
                         name = it.name,
                         value = "",
                         startPath = templateParser.parseString(
@@ -153,16 +154,16 @@ class HomeViewModel(
         }
     }
 
-    fun onOpenPackagePickerDialog(index : Int, variableName : String) = viewModelScope.launch {
+    fun onOpenPathPickerDialog(index : Int, variableName : String) = viewModelScope.launch {
         val temp = variables.toList()
-        val startPath = (temp[index] as? VariablePackage)?.startPath ?: return@launch
+        val startPath = (temp[index] as? VariablePath)?.startPath ?: return@launch
         showFolderPickerDialog(variableName, startPath)
     }
 
     fun onProjectPathChange(requestId : String, path : String) = viewModelScope.launch {
         val temp = variables.toList()
-        val tempVariablePackage = temp.firstOrNull{it.name == requestId} as? VariablePackage
-        tempVariablePackage?.value = path
+        val tempVariablePath = temp.firstOrNull{it.name == requestId} as? VariablePath
+        tempVariablePath?.value = path
         variables.postSwap(temp)
         onGenerateTemplate()
     }
@@ -189,7 +190,7 @@ class HomeViewModel(
         }
     }
 
-    class VariablePackage(
+    class VariablePath (
         name : String,
         var value : String,
         var startPath : String

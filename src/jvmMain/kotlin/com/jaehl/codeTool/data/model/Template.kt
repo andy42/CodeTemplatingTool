@@ -7,8 +7,7 @@ data class TemplateFile(
 
 enum class TemplateVariableType(val value : kotlin.String){
     String("String"),
-    Path("Path"),
-    Package("Package");
+    Path("Path");
 
     override fun toString(): kotlin.String {
         return value
