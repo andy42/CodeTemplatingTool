@@ -28,7 +28,7 @@ fun ProjectListPage(
     ) {
         Column() {
             AppBar(
-                title = "Projects",
+                title = "Home",
                 returnButton = false,
                 onBackClick = {
                     onGoBackClicked()
@@ -68,7 +68,7 @@ fun ProjectListPage(
                         viewModel.onTemplatesEditClick()
                     },
                 ) {
-                    Text(text = "Edit Templates")
+                    Text(text = "Templates")
                 }
             }
         }
