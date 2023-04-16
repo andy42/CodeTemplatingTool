@@ -25,7 +25,6 @@ class TemplateEditViewModel(
 
     var name = mutableStateOf<TextFieldData>(TextFieldData(value = template?.name ?: ""))
 
-    var dirPath = mutableStateOf<TextFieldData>(TextFieldData(value = template?.dirPath ?: ""))
     var variables = mutableStateListOf<TemplateVariable>()
     var files = mutableStateListOf<TemplateFileViewModel>()
         private set
@@ -72,7 +71,7 @@ class TemplateEditViewModel(
     }
 
     private fun validateTemplate(){
-        isSaveEnabled.value = templateEditValidator.validateTemplate(currentTemplate = template, name = name.value.value, dirPath = dirPath.value.value)
+        isSaveEnabled.value = templateEditValidator.validateTemplateName(currentTemplate = template, name = name.value.value)
     }
 
     private fun validateTemplateFile(){
@@ -87,11 +86,6 @@ class TemplateEditViewModel(
 
     fun onNameChange(name : String){
         this@TemplateEditViewModel.name.value = TextFieldData(value = name)
-        validateTemplate()
-    }
-
-    fun onDirPathChange(dirPath : String) {
-        this@TemplateEditViewModel.dirPath.value = TextFieldData(value = dirPath)
         validateTemplate()
     }
 
@@ -163,9 +157,9 @@ class TemplateEditViewModel(
 
     fun deleteTemplateFile(id : Int) = viewModelScope.launch {
         template?.let { template ->
+            selectedNavRow.value = NavRowSelect.NavRowGeneralInfoSelect
             if(templateRepo.deleteTemplateFile(template.id, files[id].toTemplateFile())){
                 loadTemplateFiles(template)
-                selectedNavRow.value = NavRowSelect.NavRowGeneralInfoSelect
             }
         }
     }
@@ -197,10 +191,10 @@ class TemplateEditViewModel(
     }
     fun save() = viewModelScope.launch {
         template = templateRepo.updateTemplate(
-            Template(
+            oldTemplate = this@TemplateEditViewModel.template,
+            newTemplate = Template(
                 id = template?.id ?: "",
                 name = name.value.value,
-                dirPath = dirPath.value.value,
                 variable = variables.toList(),
                 files = files.toList().map { it.toTemplateFile() }
             )
@@ -213,10 +207,6 @@ class TemplateEditViewModel(
 
     override fun onTemplateNameError(error: String) {
         name.value = name.value.copy(error = error)
-    }
-
-    override fun onTemplateDirError(error: String) {
-        dirPath.value = dirPath.value.copy(error = error)
     }
 
     override fun onTemplateFilePathError(error : String) {

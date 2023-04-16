@@ -3,54 +3,6 @@ This Code Tool is used to template files with key-value variables in a simple GU
 
 Applying a template to a project will create files in the selected project, reducing the need to recreate boil plate classes/files every time.
 
-## Example
-
-### project Edit
-
-Home -> ProjectEdit
-
-setup a new project
-
-![](/readmeScreenshots/exsample0.png)
-
-### template Edit General Info
-
-Home -> (Template)template List -> (Add Template)Template Edit -> General Info
-
-create a new Template
-
-![](/readmeScreenshots/exsample1.png)
-
-### template Edit - Files first File
-
-Home -> (Template)template List -> (Add Template)Template Edit -> ViewModel.txt
-
-add a template file
-
-the suffix "$import" used with {{mainPackage$import}} gives "com.jaehl.demo" (replaces "\" with "." and removes first ".") when used in the demo project
-
-![](/readmeScreenshots/exsample2.png)
-
-### template Edit - Files second file
-
-Home -> (Template)template List -> (Add Template)Template Edit -> Interface.txt
-
-add a template file
-
-![](/readmeScreenshots/exsample3.png)
-
-### template Apply - before Variables entered
-
-Home -> Demo -> Example
-
-![](/readmeScreenshots/exsample4.png)
-
-### template Apply - After Variables entered
-
-Home -> Demo -> Example
-
-![](/readmeScreenshots/exsample5.png)
-
 # Template Variables
 
 A Template Variable is used in a template to replace a key String "{{name}}" with a user-supplied value from a text field
@@ -156,3 +108,51 @@ Applying the template that will create the files in the project
 - this will create the files list below the button in the selected project
 
 ![](/readmeScreenshots/templateApply1.png)
+
+## Example
+
+### project Edit
+
+Home -> ProjectEdit
+
+setup a new project
+
+![](/readmeScreenshots/exsample0.png)
+
+### template Edit General Info
+
+Home -> (Template)template List -> (Add Template)Template Edit -> General Info
+
+create a new Template
+
+![](/readmeScreenshots/exsample1.png)
+
+### template Edit - Files first File
+
+Home -> (Template)template List -> (Add Template)Template Edit -> ViewModel.txt
+
+add a template file
+
+the suffix "$import" used with {{mainPackage$import}} gives "com.jaehl.demo" (replaces "\" with "." and removes first ".") when used in the demo project
+
+![](/readmeScreenshots/exsample2.png)
+
+### template Edit - Files second file
+
+Home -> (Template)template List -> (Add Template)Template Edit -> Interface.txt
+
+add a template file
+
+![](/readmeScreenshots/exsample3.png)
+
+### template Apply - before Variables entered
+
+Home -> Demo -> Example
+
+![](/readmeScreenshots/exsample4.png)
+
+### template Apply - After Variables entered
+
+Home -> Demo -> Example
+
+![](/readmeScreenshots/exsample5.png)
