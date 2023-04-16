@@ -129,21 +129,6 @@ fun MainPannel(
             Text(text = viewModel.name.value.error ?: "", color = R.Color.errorText)
         }
 
-        OutlinedTextField(
-            value = viewModel.dirPath.value.value,
-            onValueChange = {
-                viewModel.onDirPathChange(it)
-            },
-            label = { Text("Directory Path") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 5.dp),
-            isError = (viewModel.dirPath.value.error != null)
-        )
-        if(viewModel.dirPath.value.error != null) {
-            Text(text = viewModel.dirPath.value.error ?: "", color = R.Color.errorText)
-        }
-
         viewModel.variables.forEachIndexed { index, variable ->
             TemplateVariable(
                 viewModel,

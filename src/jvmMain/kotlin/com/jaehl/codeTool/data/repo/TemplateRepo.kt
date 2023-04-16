@@ -49,11 +49,27 @@ class TemplateRepo(
         }
     }
 
-    fun updateTemplate(template : Template) : Template{
+    private fun createTemplateDir(template : Template) : String{
+        return fileUtil.getPathSeparator()+template.name
+    }
+
+    fun updateTemplate(oldTemplate : Template?, newTemplate : Template) : Template{
+        var template = newTemplate.copy(dirPath = createTemplateDir(newTemplate))
         if(template.id.isEmpty()){
             template.id = createNewTemplateId()
         }
-        fileUtil.createDirectory(Path.of(templateUserDir+template.dirPath))
+        if(oldTemplate?.dirPath.isNullOrBlank()){
+
+            fileUtil.createDirectory(Path.of(templateUserDir+template.dirPath))
+        }
+        else {
+            oldTemplate?.dirPath?.let {
+                if(!fileUtil.renameDirectory(Path.of(templateUserDir+it),Path.of(templateUserDir+template.dirPath) )){
+                    logger.error("TemplateRepo::updateTemplate error" )
+                }
+            }
+        }
+
         templateMap[template.id] = template
         templateListLoader.save(templateMap.values.toList())
         templates.tryEmit(templateMap.values.toList())
@@ -67,7 +83,6 @@ class TemplateRepo(
         for(templateFile in template.files) {
             fileUtil.deleteFile(Path.of(templateUserDir+template.dirPath+templateFile.path))
         }
-        fileUtil.deleteDirectory(Path.of(templateUserDir+template.dirPath))
 
         templateMap.remove(template.id)
         templateListLoader.save(templateMap.values.toList())
@@ -94,10 +109,9 @@ class TemplateRepo(
     }
 
     private fun moveTemplateFile(template : Template, currentTemplateFile : TemplateFile, newTemplateFile : TemplateFile) {
-        val templateDir = templateUserDir+ template.dirPath
         fileUtil.moveFile(
-            src = Path.of(templateDir+currentTemplateFile.path),
-            dest = Path.of(templateDir+newTemplateFile.path))
+            src = getTemplateFilePath(template, currentTemplateFile),
+            dest = getTemplateFilePath(template, newTemplateFile))
     }
 
     fun loadTemplateFile(template : Template, templateFile : TemplateFile) : String{

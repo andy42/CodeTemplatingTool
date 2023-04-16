@@ -6,9 +6,7 @@ import com.jaehl.codeTool.util.FileUtil
 
 interface TemplateEditValidator {
     fun setValidatorListener(listener : TemplateEditValidatorListener)
-    fun validateTemplate(currentTemplate : Template?, name : String, dirPath : String) : Boolean
     fun validateTemplateName(currentTemplate : Template?, name : String) : Boolean
-    fun validateTemplateDir(currentTemplate : Template?, dirPath : String) : Boolean
 
     fun validateTemplateFile(filePaths : List<String>, currentPath : String, path : String, pathDestination : String) : Boolean
     fun validateTemplateFilePath(filePaths : List<String>, currentPath : String, path : String) : Boolean
@@ -17,7 +15,6 @@ interface TemplateEditValidator {
 
 interface TemplateEditValidatorListener {
     fun onTemplateNameError(error : String)
-    fun onTemplateDirError(error : String)
 
     fun onTemplateFilePathError(error : String)
     fun onTemplateFilePathDestinationError(error : String)
@@ -34,40 +31,19 @@ class TemplateEditValidatorImp(
         this.listener = listener
     }
 
-    override fun validateTemplate(
-        currentTemplate : Template?,
-        name : String,
-        dir : String
-    ) : Boolean {
-        return validateTemplateName(currentTemplate, name) && validateTemplateDir(currentTemplate, dir)
-    }
-
     override fun validateTemplateName(currentTemplate : Template?, name : String) : Boolean {
         if (name.isEmpty()) {
             listener?.onTemplateNameError("field empty")
+            return false
+        }
+        else if (!templateNameRegex.containsMatchIn(name)) {
+            listener?.onTemplateNameError("can only contain alpha numeric, spaces, - or _ ")
             return false
         }
         else if (currentTemplate?.name != name && templateRepo.templateNameExist(name)) {
             listener?.onTemplateNameError("name already in use")
             return false
         }
-        return true
-    }
-
-    override fun validateTemplateDir(currentTemplate : Template?, dirPath : String) : Boolean {
-        if (dirPath.isEmpty()) {
-            listener?.onTemplateDirError("field empty")
-            return false
-        }
-        else if (dirPath[0].toString() != fileUtil.getPathSeparator()) {
-            listener?.onTemplateDirError("most start with a \"${fileUtil.getPathSeparator()}\"")
-            return false
-        }
-        else if (currentTemplate?.dirPath != dirPath && templateRepo.templateDirPathExist(dirPath)) {
-            listener?.onTemplateDirError("directory already in use")
-            return false
-        }
-
         return true
     }
 
@@ -98,4 +74,6 @@ class TemplateEditValidatorImp(
         }
         return true
     }
+
+    private val templateNameRegex = "^([A-Za-z0-9\\-\\_ ])+\$".toRegex(RegexOption.IGNORE_CASE)
 }
