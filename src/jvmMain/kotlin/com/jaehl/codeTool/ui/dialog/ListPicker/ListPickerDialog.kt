@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jaehl.codeTool.ui.R
 import com.jaehl.codeTool.ui.component.DialogTitleBar
@@ -22,7 +23,9 @@ fun <T> ListPickerDialog(
     list : List<T>,
     rowTitle : (value : T) -> String,
     onSelect : (requestId : String, item : T) -> Unit,
-    onClose : () -> Unit
+    onClose : () -> Unit,
+    dialogWidth : Dp?,
+    dialogHeight : Dp?
 ){
     val state : LazyListState = rememberLazyListState()
     Box(modifier = Modifier
@@ -32,8 +35,8 @@ fun <T> ListPickerDialog(
         .background(R.Color.dialogBackground)) {
         Column(
             modifier = Modifier
-                .width(400.dp)
-                .fillMaxHeight()
+                .width(dialogWidth ?: 400.dp)
+                .height(dialogHeight ?: 400.dp)
                 .padding(top = 20.dp, bottom = 20.dp)
                 .align(Alignment.Center)
                 .background(Color.White),
@@ -82,6 +85,7 @@ fun <T> ItemPickerRow(
             .clickable {
                 onSelect(item)
             }
+            .padding(start = 20.dp, top = 10.dp, bottom = 10.dp)
     ) {
         Text(
             text = title,
