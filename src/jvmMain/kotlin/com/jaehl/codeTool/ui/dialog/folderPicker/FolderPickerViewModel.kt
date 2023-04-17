@@ -70,7 +70,11 @@ class FolderPickerViewModel(
     }
 
     private fun buildFolderPath() : String {
-        return folderPathList.joinToString(File.separator)
+        return if(folderPathList.size == 1){
+            folderPathList.first() + File.separator
+        } else {
+            folderPathList.joinToString(File.separator)
+        }
     }
 
     private suspend fun updateFolderItems() {
