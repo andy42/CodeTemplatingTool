@@ -15,10 +15,12 @@ import kotlinx.coroutines.launch
 class ProjectEditViewModel(
     private val logger : Logger,
     private val projectRepo : ProjectRepo,
-    private val project : Project?,
+    private var project : Project?,
     private val showFolderPickerDialog : (currentPath : String?) -> Unit,
     private val showListPickerDialog : (index : Int) -> Unit,
     private val showDefaultVariablePickerDialog : () -> Unit,
+    private val onGoBackClicked: () -> Unit,
+    private val showCloseWithoutSavingDialog: () -> Unit
 ) : ViewModel() {
 
     var projectName = mutableStateOf<String>("")
@@ -34,11 +36,12 @@ class ProjectEditViewModel(
     override fun init(viewModelScope: CoroutineScope) {
         super.init(viewModelScope)
 
+
         viewModelScope.launch {
-            if(project != null){
-                projectName.value = project.name
-                projectPath.value = project.projectPath
-                projectVariables.postSwap(project.variable)
+            project?.let {
+                projectName.value = it.name
+                projectPath.value = it.projectPath
+                projectVariables.postSwap(it.variable)
             }
             isSaveEnabled.value = validateProject()
         }
@@ -102,6 +105,33 @@ class ProjectEditViewModel(
         return true
     }
 
+    private fun checkIfUnsaved() : Boolean {
+        if ( project?.name != projectName.value){
+            return true
+        }
+        if ( project?.projectPath != projectPath.value){
+            return true
+        }
+
+        if ( project?.variable?.size != projectVariables.size){
+            return true
+        }
+        project?.variable?.forEachIndexed {index, projectVariable ->
+            if(projectVariables[index] != projectVariable){
+                return true
+            }
+        }
+
+        return false
+    }
+    fun onNavBackClick() = viewModelScope.launch {
+        if(checkIfUnsaved()){
+            showCloseWithoutSavingDialog()
+        } else {
+            onGoBackClicked()
+        }
+    }
+
     fun save() = viewModelScope.launch {
         var newProject = Project(
             name = projectName.value,
@@ -109,6 +139,17 @@ class ProjectEditViewModel(
             variable = projectVariables.toList()
         )
 
-        projectRepo.updateProject(newProject)
+        project = projectRepo.updateProject(newProject)
+    }
+
+    fun delete() = viewModelScope.launch {
+        project?.let {
+            projectRepo.deleteProject(it.id)
+            onGoBackClicked()
+        }
+    }
+
+    fun closeWithoutSaving() {
+        onGoBackClicked()
     }
 }

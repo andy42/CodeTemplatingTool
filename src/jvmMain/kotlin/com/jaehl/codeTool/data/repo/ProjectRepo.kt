@@ -34,8 +34,18 @@ class ProjectRepo(
         return projectMap[id]
     }
 
-    fun updateProject(project : Project){
+    fun updateProject(project : Project) : Project{
+        if(project.id.isEmpty()){
+            project.id = createNewId()
+        }
         projectMap[project.id] = project
+        projectListLoader.save(projectMap.values.toList())
+        projects.tryEmit(projectMap.values.toList())
+        return project
+    }
+
+    fun deleteProject(id : String) {
+        projectMap.remove(id)
         projectListLoader.save(projectMap.values.toList())
         projects.tryEmit(projectMap.values.toList())
     }

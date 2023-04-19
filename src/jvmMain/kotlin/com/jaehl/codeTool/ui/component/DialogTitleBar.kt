@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun DialogTitleBar(title: String, onClose : () -> Unit){
+fun DialogTitleBar(title: String, onClose : (() -> Unit)? = null){
     var navigationIcon : @Composable (() -> Unit)? = null
     TopAppBar(
         title = {
@@ -18,11 +18,13 @@ fun DialogTitleBar(title: String, onClose : () -> Unit){
         },
         navigationIcon = navigationIcon,
         actions = {
-            IconButton(content = {
-                Icon(Icons.Outlined.Close, "Close", tint = Color.White)
-            }, onClick = {
-                onClose()
-            })
+            if(onClose != null) {
+                IconButton(content = {
+                    Icon(Icons.Outlined.Close, "Close", tint = Color.White)
+                }, onClick = {
+                    onClose?.invoke()
+                })
+            }
         }
     )
 }
