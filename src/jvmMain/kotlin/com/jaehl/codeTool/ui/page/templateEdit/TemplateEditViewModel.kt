@@ -94,14 +94,6 @@ class TemplateEditViewModel(
         if(checkIfCurrentPageSaved()) {
             onChangeNavPage(newNavRowGeneralInfoSelect)
         } else {
-//            buildAndShowWarningDialog(
-//                message = "Do you want to change page without saving? your current changes will be lost",
-//                acceptText = "yes",
-//                declineText = "No",
-//                acceptCallBack = {
-//                    onChangeNavPage(newNavRowGeneralInfoSelect)
-//                }
-//            )
             showWarningDialog(
                 WarningDialogConfig(
                     message = "Do you want to change page without saving? your current changes will be lost",
@@ -121,14 +113,6 @@ class TemplateEditViewModel(
         if(checkIfCurrentPageSaved()) {
             onChangeNavPage(newNavRowFileSelect)
         } else {
-//            buildAndShowWarningDialog(
-//                message = "Do you want to change page without saving? your current changes will be lost",
-//                acceptText = "yes",
-//                declineText = "No",
-//                acceptCallBack = {
-//                    onChangeNavPage(newNavRowFileSelect)
-//                }
-//            )
             showWarningDialog(
                 WarningDialogConfig(
                     message = "Do you want to change page without saving? your current changes will be lost",
@@ -184,21 +168,6 @@ class TemplateEditViewModel(
         ))
     }
 
-//    private fun buildAndShowWarningDialog(
-//        title : String = "Warning",
-//        message : String,
-//        acceptCallBack : () -> Unit = {},
-//        acceptText : String = "Ok",
-//        declineText : String? = null) {
-//        showWarningDialog(
-//            title,
-//            message,
-//            acceptCallBack,
-//            acceptText,
-//            declineText
-//        )
-//    }
-
     fun addTemplateFile() = viewModelScope.launch {
         val template = this@TemplateEditViewModel.template
         if(template == null){
@@ -207,9 +176,6 @@ class TemplateEditViewModel(
                     message = "To add a file, you most first save"
                 )
             )
-//            buildAndShowWarningDialog(
-//                message = "To add a file, you most first save",
-//            )
             return@launch
         }
 
@@ -316,14 +282,6 @@ class TemplateEditViewModel(
         if(checkIfCurrentPageSaved()){
             onClose()
         } else {
-//            buildAndShowWarningDialog(
-//                message = "Do you want to close without saving? your current changes will be lost",
-//                acceptText = "yes",
-//                declineText = "No",
-//                acceptCallBack = {
-//                    closeWithoutSaving()
-//                }
-//            )
             showWarningDialog(
                 WarningDialogConfig(
                     message = "Do you want to close without saving? your current changes will be lost",

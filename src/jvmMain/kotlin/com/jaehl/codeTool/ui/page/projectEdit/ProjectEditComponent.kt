@@ -117,18 +117,6 @@ class ProjectEditComponent(
                                 dialogNavigation.dismiss()
                             }
                         )
-//                        requestId = "",
-//                        title = "Warning",
-//                        message = "Do you want to close without saving?",
-//                        acceptText = "Yes",
-//                        declineText = "No",
-//                        onClose = {
-//                            dialogNavigation.dismiss()
-//                        },
-//                        onAccept = { requestId ->
-//                            dialogNavigation.dismiss()
-//                            viewModel.closeWithoutSaving()
-//                        }
                     )
                 }
             }

@@ -79,18 +79,6 @@ class TemplateEditComponent(
                                 config.warningDialogConfig.declineCallBack()
                             }
                         )
-//                        requestId = "",
-//                        title = config.title,
-//                        message = config.message,
-//                        acceptText = config.acceptText,
-//                        declineText = config.declineText,
-//                        onClose = {
-//                            dialogNavigation.dismiss()
-//                        },
-//                        onAccept = {
-//                            dialogNavigation.dismiss()
-//                            config.acceptCallBack()
-//                        }
                     )
                 }
             }
@@ -119,22 +107,15 @@ class TemplateEditComponent(
 
     fun showWarningDialog (warningDialogConfig : WarningDialogConfig) {
 
-        dialogNavigation.activate(DialogConfig.WarningDialog(
-//            title = title,
-//            message = message,
-//            acceptCallBack = acceptCallBack,
-//            acceptText = acceptText,
-//            declineText= declineText
-            warningDialogConfig
-        ))
+        dialogNavigation.activate(
+            DialogConfig.WarningDialog(
+                warningDialogConfig
+            )
+        )
     }
 
     private sealed class DialogConfig : Parcelable {
         data class  TemplateVariableTypePickerConfig(val requestId: String) : DialogConfig()
-        //object SaveWarningConfig : DialogConfig()
-
-        //data class ChangePageWithOutSaving(val navRowSelect: TemplateEditViewModel.NavRowSelect) : DialogConfig()
-        //data class InfoWarning(val message : String) : DialogConfig()
 
         data class WarningDialog(
             val warningDialogConfig : WarningDialogConfig

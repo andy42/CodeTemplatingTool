@@ -10,14 +10,7 @@ import com.jaehl.codeTool.util.Logger
 class WarningDialogComponent(
     private val componentContext: ComponentContext,
     private val logger : Logger,
-    private val config : WarningDialogConfig,
-//    private val title : String,
-//    private val message : String,
-//    private val acceptText : String,
-//    private val declineText : String? = null,
-//    private val onClose: () -> Unit,
-//    private val onAccept: (requestId : String) -> Unit
-
+    private val config : WarningDialogConfig
 ) : Component, ComponentContext by componentContext {
 
     private val viewModel = WarningViewModel(
