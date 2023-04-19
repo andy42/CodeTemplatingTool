@@ -18,8 +18,7 @@ import com.jaehl.codeTool.ui.component.Picker
 
 @Composable
 fun ProjectEditPage(
-    viewModel : ProjectEditViewModel,
-    onGoBackClicked: () -> Unit
+    viewModel : ProjectEditViewModel
 ) {
 
     Column(
@@ -31,7 +30,7 @@ fun ProjectEditPage(
             title = "ProjectEdit",
             returnButton = true,
             onBackClick = {
-                onGoBackClicked()
+                viewModel.onNavBackClick()
             }
         )
 
@@ -80,6 +79,18 @@ fun ProjectEditPage(
                 ) {
                     Button(
                         modifier = Modifier,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = R.Color.deleteButtonBackground,
+                            contentColor = R.Color.deleteButtonText
+                        ),
+                        onClick = {
+                            viewModel.delete()
+                        }
+                    ) {
+                        Text(text = "Delete")
+                    }
+                    Button(
+                        modifier = Modifier,
                         onClick = {
                             viewModel.addVariable()
                         }
@@ -107,9 +118,7 @@ fun ProjectEditPage(
                     }
                 }
             }
-
         }
-
     }
 }
 

@@ -14,6 +14,8 @@ import com.jaehl.codeTool.data.model.Template
 import com.jaehl.codeTool.data.model.TemplateVariableType
 import com.jaehl.codeTool.data.repo.TemplateRepo
 import com.jaehl.codeTool.ui.dialog.ListPicker.ListPickerComponent
+import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogComponent
+import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogConfig
 import com.jaehl.codeTool.ui.navigation.Component
 import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.Logger
@@ -28,7 +30,16 @@ class TemplateEditComponent(
     private val onClose: () -> Unit
 ) : Component, ComponentContext by componentContext {
 
-    private val viewModel = TemplateEditViewModel(logger, fileUtil, templateRepo, templateEditValidator, template, ::showTypeVariablePickerDialog, onClose)
+    private val viewModel = TemplateEditViewModel(
+        logger,
+        fileUtil,
+        templateRepo,
+        templateEditValidator,
+        template,
+        showTypeVariablePickerDialog = ::showTypeVariablePickerDialog,
+        onClose = onClose,
+        showWarningDialog = ::showWarningDialog)
+
     private val dialogNavigation = OverlayNavigation<DialogConfig>()
 
     private val _dialog =
@@ -54,8 +65,37 @@ class TemplateEditComponent(
                         }
                     )
                 }
+                is DialogConfig.WarningDialog -> {
+                    WarningDialogComponent(
+                        componentContext = componentContext,
+                        logger = logger,
+                        config = config.warningDialogConfig.copy(
+                            acceptCallBack = {
+                                dialogNavigation.dismiss()
+                                config.warningDialogConfig.acceptCallBack()
+                            },
+                            declineCallBack = {
+                                dialogNavigation.dismiss()
+                                config.warningDialogConfig.declineCallBack()
+                            }
+                        )
+//                        requestId = "",
+//                        title = config.title,
+//                        message = config.message,
+//                        acceptText = config.acceptText,
+//                        declineText = config.declineText,
+//                        onClose = {
+//                            dialogNavigation.dismiss()
+//                        },
+//                        onAccept = {
+//                            dialogNavigation.dismiss()
+//                            config.acceptCallBack()
+//                        }
+                    )
+                }
             }
         }
+
     @Composable
     override fun render() {
 
@@ -77,7 +117,27 @@ class TemplateEditComponent(
         dialogNavigation.activate(DialogConfig.TemplateVariableTypePickerConfig(requestId = index.toString()))
     }
 
+    fun showWarningDialog (warningDialogConfig : WarningDialogConfig) {
+
+        dialogNavigation.activate(DialogConfig.WarningDialog(
+//            title = title,
+//            message = message,
+//            acceptCallBack = acceptCallBack,
+//            acceptText = acceptText,
+//            declineText= declineText
+            warningDialogConfig
+        ))
+    }
+
     private sealed class DialogConfig : Parcelable {
         data class  TemplateVariableTypePickerConfig(val requestId: String) : DialogConfig()
+        //object SaveWarningConfig : DialogConfig()
+
+        //data class ChangePageWithOutSaving(val navRowSelect: TemplateEditViewModel.NavRowSelect) : DialogConfig()
+        //data class InfoWarning(val message : String) : DialogConfig()
+
+        data class WarningDialog(
+            val warningDialogConfig : WarningDialogConfig
+        ) : DialogConfig()
     }
 }

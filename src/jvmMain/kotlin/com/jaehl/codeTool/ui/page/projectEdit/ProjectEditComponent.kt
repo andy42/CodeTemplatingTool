@@ -14,6 +14,8 @@ import com.jaehl.codeTool.data.model.TemplateVariableType
 import com.jaehl.codeTool.data.repo.ProjectRepo
 import com.jaehl.codeTool.ui.dialog.ListPicker.ListPickerComponent
 import com.jaehl.codeTool.ui.dialog.folderPicker.FolderPickerDialogComponent
+import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogComponent
+import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogConfig
 import com.jaehl.codeTool.ui.navigation.Component
 import com.jaehl.codeTool.ui.util.OsPathConverter
 import com.jaehl.codeTool.util.FileUtil
@@ -29,7 +31,15 @@ class ProjectEditComponent(
     private val onGoBackClicked: () -> Unit
 ) : Component, ComponentContext by componentContext {
 
-    private val viewModel = ProjectEditViewModel(logger, projectRepo, project, ::showFolderPickerDialog, ::showListPickerDialog, ::showDefaultVariablePickerDialog)
+    private val viewModel = ProjectEditViewModel(
+        logger,
+        projectRepo,
+        project,
+        ::showFolderPickerDialog,
+        ::showListPickerDialog,
+        ::showDefaultVariablePickerDialog,
+        onGoBackClicked,
+        ::showCloseWithoutSavingDialog)
 
     private val dialogNavigation = OverlayNavigation<DialogConfig>()
 
@@ -90,6 +100,37 @@ class ProjectEditComponent(
                         }
                     )
                 }
+                is DialogConfig.SaveWarningConfig -> {
+                    WarningDialogComponent(
+                        componentContext = componentContext,
+                        logger = logger,
+                        config = WarningDialogConfig(
+                            title = "Warning",
+                            message = "Do you want to close without saving?",
+                            acceptText = "Yes",
+                            declineText = "No",
+                            acceptCallBack = {
+                                dialogNavigation.dismiss()
+                                viewModel.closeWithoutSaving()
+                            },
+                            declineCallBack = {
+                                dialogNavigation.dismiss()
+                            }
+                        )
+//                        requestId = "",
+//                        title = "Warning",
+//                        message = "Do you want to close without saving?",
+//                        acceptText = "Yes",
+//                        declineText = "No",
+//                        onClose = {
+//                            dialogNavigation.dismiss()
+//                        },
+//                        onAccept = { requestId ->
+//                            dialogNavigation.dismiss()
+//                            viewModel.closeWithoutSaving()
+//                        }
+                    )
+                }
             }
 
         }
@@ -106,6 +147,10 @@ class ProjectEditComponent(
         dialogNavigation.activate(DialogConfig.DefaultVariablePickerConfig(requestId = ""))
     }
 
+    fun showCloseWithoutSavingDialog() {
+        dialogNavigation.activate(DialogConfig.SaveWarningConfig)
+    }
+
     @Composable
     override fun render() {
         val scope = rememberCoroutineScope()
@@ -114,8 +159,7 @@ class ProjectEditComponent(
         }
 
         ProjectEditPage(
-            viewModel = viewModel,
-            onGoBackClicked = onGoBackClicked
+            viewModel = viewModel
         )
 
         _dialog.subscribeAsState().value.overlay?.let {
@@ -127,5 +171,6 @@ class ProjectEditComponent(
         data class FolderPickerConfig(val requestId: String, val currentPath : String?) : DialogConfig()
         data class  TemplateVariableTypePickerConfig(val requestId: String) : DialogConfig()
         data class  DefaultVariablePickerConfig(val requestId: String) : DialogConfig()
+        object SaveWarningConfig : DialogConfig()
     }
 }
