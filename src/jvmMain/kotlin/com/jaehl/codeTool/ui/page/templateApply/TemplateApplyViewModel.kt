@@ -181,6 +181,15 @@ class TemplateApplyViewModel(
     fun onOpenPathPickerDialog(index : Int, variableName : String) = viewModelScope.launch {
         val temp = variables.toList()
         val startPath = (temp[index] as? VariablePath)?.startPath ?: return@launch
+        if (!fileUtil.fileExists(Paths.get(startPath))){
+            showWarningDialog(
+                WarningDialogConfig(
+                    title = "Error",
+                    message = "picker start Path does not exist : $startPath"
+                )
+            )
+            return@launch
+        }
         showFolderPickerDialog(variableName, startPath)
     }
 
