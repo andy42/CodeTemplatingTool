@@ -320,8 +320,8 @@ fun FilePannel(
             Button(
                 modifier = Modifier,
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = R.Color.deleteButtonBackground,
-                    contentColor = R.Color.deleteButtonText
+                    backgroundColor = R.Color.ButtonDelete.background,
+                    contentColor = R.Color.ButtonDelete.text
                 ),
                 onClick = {
                     viewModel.deleteTemplateFile(templateFile.id)

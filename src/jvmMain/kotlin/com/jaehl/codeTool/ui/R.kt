@@ -8,10 +8,45 @@ object R {
 
         val rowBackgroundOdd = Color(0xffffffff)
         val rowBackgroundEven = Color(0xffededed)
+//
+//        val primary = Color(0xff5B8C5A)
+//        val secondary = Color(0xff596157)
 
-        val primary = Color(0xffbfa456)
         val textDark = Color(0xff000000)
         val textLight = Color(0xffffffff)
+
+
+        object Primary {
+            val background = Color(0xff596157)
+            val content = textLight
+        }
+        object Secondary {
+            val background = Color(0xff5B8C5A)
+            val content = textLight
+        }
+
+        object Tertiary {
+            val background = Color(0xffCFD186)
+            val content = textDark
+        }
+
+        object Warning {
+            val background = Color(0xffE3655B)
+            val content = textLight
+        }
+
+//        val primary = Color(0xff52414C)
+//        val primaryContent = textLight
+//
+//        val secondary = Color(0xff5B8C5A)
+//        val secondaryContent = textLight
+//
+//        val tertiary = Color(0xffCFD186)
+//        val tertiaryContent = textLight
+//
+//        val warning = Color(0xffE3655B)
+//        val warningContent = textLight
+
 
         val dividerColor = Color(0xffadadad)
 
@@ -35,36 +70,34 @@ object R {
         val rowText = textDark
         val rowHoverBackground = Color(0x11000000)
         val rowHoverText = Color(0xff000000)
-        val rowSelectedBackground = primary
-        val rowSelectedText = textLight
 
-        var deleteButtonBackground = Color(0xffc23838)
-        var deleteButtonText = Color(0xffffffff)
+        val rowSelectedBackground = Tertiary.background
+        val rowSelectedText = Tertiary.content
 
         object Button {
-            var background = primary
-            var text = textLight
+            var background = Secondary.background
+            var text = Secondary.content
         }
 
         object ButtonOutlined {
-            var border = primary
-            var text = primary
+            var border = Secondary.background
+            var text = Secondary.background
         }
 
         object ButtonDelete {
-            var background = Color(0xffc23838)
-            var text = Color(0xffffffff)
+            var background = Warning.background
+            var text = Warning.content
         }
 
         object TopAppBar {
-            var background = primary
-            var text = textLight
+            var background = Primary.background
+            var text = Primary.content
         }
 
         object Card {
             object SubTitle {
-                var background = primary
-                var text = textLight
+                var background = Tertiary.background
+                var text = Tertiary.content
             }
         }
     }

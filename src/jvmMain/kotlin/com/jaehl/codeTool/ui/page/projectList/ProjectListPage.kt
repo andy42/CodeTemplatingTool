@@ -108,7 +108,7 @@ fun ProjectRow(
             modifier = Modifier
                 .align(alignment = Alignment.CenterEnd),
             content = {
-                Icon(Icons.Outlined.Edit, "Edit", tint = R.Color.primary)
+                Icon(Icons.Outlined.Edit, "Edit", tint = R.Color.Primary.background)
             }, onClick = {
                 viewModel.onProjectEditClick(project)
             }

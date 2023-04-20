@@ -101,7 +101,7 @@ fun FolderBreadcrumbChip(
                 }
             }
             .padding(start = 5.dp)
-            .background(if(selectable) R.Color.primary else R.Color.disabledBackground)
+            .background(if(selectable) R.Color.Primary.background else R.Color.disabledBackground)
     ) {
         Text(
             text = name,

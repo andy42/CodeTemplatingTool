@@ -162,12 +162,13 @@ fun TemplateFile(
                 text = templateFileOutput.path,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(R.Color.primary)
+                    .background(R.Color.Tertiary.background)
                     .padding(top = 5.dp, bottom = 5.dp, start = 10.dp),
-                color = R.Color.textLight)
+                color = R.Color.Tertiary.content)
 
             Text(
                 text = templateFileOutput.data,
+                color = R.Color.textDark,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(R.Color.codeBlock)
