@@ -70,6 +70,10 @@ fun FolderPickerPage(
                     modifier = Modifier
                         .align(alignment = Alignment.Center)
                         .padding(top = 5.dp, bottom = 5.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = R.Color.Button.background,
+                        contentColor = R.Color.Button.text
+                    ),
                     enabled = (viewModel.selectedFolders.isNotEmpty()),
                     onClick = {
                         viewModel.submit()

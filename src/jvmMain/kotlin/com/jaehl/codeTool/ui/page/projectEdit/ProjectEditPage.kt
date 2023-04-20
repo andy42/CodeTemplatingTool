@@ -80,8 +80,8 @@ fun ProjectEditPage(
                     Button(
                         modifier = Modifier,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = R.Color.deleteButtonBackground,
-                            contentColor = R.Color.deleteButtonText
+                            backgroundColor = R.Color.ButtonDelete.background,
+                            contentColor = R.Color.ButtonDelete.text
                         ),
                         onClick = {
                             viewModel.delete()
@@ -91,6 +91,10 @@ fun ProjectEditPage(
                     }
                     Button(
                         modifier = Modifier,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = R.Color.Button.background,
+                            contentColor = R.Color.Button.text
+                        ),
                         onClick = {
                             viewModel.addVariable()
                         }
@@ -100,6 +104,10 @@ fun ProjectEditPage(
 
                     Button(
                         modifier = Modifier,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = R.Color.Button.background,
+                            contentColor = R.Color.Button.text
+                        ),
                         onClick = {
                             viewModel.openDefaultVariablePickerDialog()
                         }
@@ -109,6 +117,10 @@ fun ProjectEditPage(
 
                     Button(
                         modifier = Modifier,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = R.Color.Button.background,
+                            contentColor = R.Color.Button.text
+                        ),
                         enabled = (viewModel.isSaveEnabled.value),
                         onClick = {
                             viewModel.save()
@@ -136,11 +148,11 @@ fun ProjectVariable(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(R.Color.cardSubTitleBackground)
+                .background(R.Color.Card.SubTitle.background)
         ) {
             Text(
                 text = if(projectVariable.name.isEmpty()) "Variable ${index +1}" else projectVariable.name,
-                color = R.Color.textLight,
+                color = R.Color.Card.SubTitle.text,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(start = 10.dp)
@@ -148,7 +160,7 @@ fun ProjectVariable(
             IconButton(
                 modifier = Modifier,
                 content = {
-                    Icon(Icons.Outlined.Delete, "Delete", tint = R.Color.textLight)
+                    Icon(Icons.Outlined.Delete, "Delete", tint = R.Color.Card.SubTitle.text)
                 }, onClick = {
                     viewModel.onProjectVariableDelete(index)
                 }

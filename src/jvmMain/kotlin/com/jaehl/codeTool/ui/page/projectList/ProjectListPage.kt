@@ -45,6 +45,10 @@ fun ProjectListPage(
                     modifier = Modifier
                         .align(alignment = Alignment.CenterHorizontally)
                         .padding(top = 10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = R.Color.Button.background,
+                        contentColor = R.Color.Button.text
+                    ),
                     onClick = {
                         viewModel.onProjectAddClick()
                     },
@@ -64,6 +68,10 @@ fun ProjectListPage(
                     modifier = Modifier
                         .align(alignment = Alignment.CenterHorizontally)
                         .padding(top = 20.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = R.Color.Button.background,
+                        contentColor = R.Color.Button.text
+                    ),
                     onClick = {
                         viewModel.onTemplatesEditClick()
                     },

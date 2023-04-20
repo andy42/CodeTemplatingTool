@@ -146,8 +146,8 @@ fun MainPannel(
             Button(
                 modifier = Modifier,
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = R.Color.deleteButtonBackground,
-                    contentColor = R.Color.deleteButtonText
+                    backgroundColor = R.Color.ButtonDelete.background,
+                    contentColor = R.Color.ButtonDelete.text
                 ),
                 onClick = {
                     viewModel.deleteTemplate()
@@ -158,6 +158,10 @@ fun MainPannel(
 
             Button(
                 modifier = Modifier,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = R.Color.Button.background,
+                    contentColor = R.Color.Button.text
+                ),
                 onClick = {
                     viewModel.addVariable()
                 }
@@ -167,6 +171,10 @@ fun MainPannel(
 
             Button(
                 modifier = Modifier,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = R.Color.Button.background,
+                    contentColor = R.Color.Button.text
+                ),
                 enabled = (viewModel.isSaveEnabled.value),
                 onClick = {
                     viewModel.save()
@@ -192,11 +200,11 @@ fun TemplateVariable(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(R.Color.cardSubTitleBackground)
+                .background(R.Color.Card.SubTitle.background)
         ) {
             Text(
                 text = if(templateVariable.name.isEmpty()) "Variable ${index +1}" else templateVariable.name,
-                color = R.Color.textLight,
+                color = R.Color.Card.SubTitle.text,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(start = 10.dp)
@@ -204,7 +212,7 @@ fun TemplateVariable(
             IconButton(
                 modifier = Modifier,
                 content = {
-                    Icon(Icons.Outlined.Delete, "Delete", tint = R.Color.textLight)
+                    Icon(Icons.Outlined.Delete, "Delete", tint = R.Color.Card.SubTitle.text)
                 }, onClick = {
                     viewModel.onTemplateVariableDelete(index)
                 }
@@ -325,6 +333,10 @@ fun FilePannel(
             Button(
                 modifier = Modifier,
                 enabled = (viewModel.isSaveEnabled.value),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = R.Color.Button.background,
+                    contentColor = R.Color.Button.text
+                ),
                 onClick = {
                     viewModel.saveTemplateFile(templateFile.id)
                 }

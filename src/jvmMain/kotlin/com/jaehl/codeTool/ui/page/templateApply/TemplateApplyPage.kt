@@ -128,8 +128,12 @@ fun MainPannel(
         ) {
             Button(
                 modifier = Modifier,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = R.Color.Button.background,
+                    contentColor = R.Color.Button.text
+                ),
                 onClick = {
-                    viewModel.onSaveTemplateClick()
+                    viewModel.onApplyTemplateClick()
                 }
             ) {
                 Text(text = "Apply Template")

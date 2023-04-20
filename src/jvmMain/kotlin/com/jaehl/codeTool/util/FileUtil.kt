@@ -5,6 +5,7 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
+import kotlin.io.path.exists
 
 
 interface FileUtil {
@@ -15,6 +16,7 @@ interface FileUtil {
     fun deleteFile(path : Path)
     fun loadFile(path : Path) : String
     fun writeFile(path : Path, date : String) : Boolean
+    fun fileExists(path : Path) : Boolean
     fun getRootDirectories() : List<String>
     fun getUserDir() : String
 
@@ -80,6 +82,10 @@ class FileUtilImp(
         }
 
         return true
+    }
+
+    override fun fileExists(path : Path) : Boolean {
+        return path.exists()
     }
 
     override fun getRootDirectories() : List<String> {

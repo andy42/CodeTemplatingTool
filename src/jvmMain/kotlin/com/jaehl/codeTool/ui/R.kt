@@ -9,11 +9,6 @@ object R {
         val rowBackgroundOdd = Color(0xffffffff)
         val rowBackgroundEven = Color(0xffededed)
 
-        val barDivider = Color(0xffbfa456)
-
-        val rowBackgroundSecondOdd = Color(0xffe0ecff)
-        val rowBackgroundSecondEven = Color(0xffd5d8e8)
-
         val primary = Color(0xffbfa456)
         val textDark = Color(0xff000000)
         val textLight = Color(0xffffffff)
@@ -23,13 +18,6 @@ object R {
         val pageBackground = Color(0xffededed)
         val cardBackground = Color(0xffffffff)
         val cardTitleBackground = Color(0xffdedede)
-        val cardTitleText = Color(0xff5e5e5e)
-
-        val cardSubTitleBackground = Color(0xffbfa456)
-
-        val recipeCircle = Color(0xffababab)
-
-        val deleteButton = Color(0xfffa4932)
 
         val errorText = Color(0xffc23838)
 
@@ -52,5 +40,32 @@ object R {
 
         var deleteButtonBackground = Color(0xffc23838)
         var deleteButtonText = Color(0xffffffff)
+
+        object Button {
+            var background = primary
+            var text = textLight
+        }
+
+        object ButtonOutlined {
+            var border = primary
+            var text = primary
+        }
+
+        object ButtonDelete {
+            var background = Color(0xffc23838)
+            var text = Color(0xffffffff)
+        }
+
+        object TopAppBar {
+            var background = primary
+            var text = textLight
+        }
+
+        object Card {
+            object SubTitle {
+                var background = primary
+                var text = textLight
+            }
+        }
     }
 }
