@@ -11,8 +11,8 @@ data class Project(
 
 data class ProjectVariable(
     var name : String = "",
-    var type : TemplateVariableType,
-    var value : String
+    var type : TemplateVariableType = TemplateVariableType.String,
+    var value : String = ""
 ) {
     companion object {
         fun createDefaults(osPathConverter : OsPathConverter) : List<ProjectVariable>{
