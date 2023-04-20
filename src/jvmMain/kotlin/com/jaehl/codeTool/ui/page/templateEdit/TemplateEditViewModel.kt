@@ -325,6 +325,7 @@ class TemplateEditViewModel(
             name.value = name.value.copy(value = template?.name ?: "")
             variables.postSwap(template?.variable ?: listOf())
             selectedNavRow.value = navRowSelect
+            validateTemplate()
         }
     }
 

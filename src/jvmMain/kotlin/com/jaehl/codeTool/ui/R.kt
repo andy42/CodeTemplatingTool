@@ -1,5 +1,7 @@
 package com.jaehl.codeTool.ui
 
+import androidx.compose.material.TextFieldColors
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.ui.graphics.Color
 
 object R {
@@ -8,13 +10,9 @@ object R {
 
         val rowBackgroundOdd = Color(0xffffffff)
         val rowBackgroundEven = Color(0xffededed)
-//
-//        val primary = Color(0xff5B8C5A)
-//        val secondary = Color(0xff596157)
 
         val textDark = Color(0xff000000)
         val textLight = Color(0xffffffff)
-
 
         object Primary {
             val background = Color(0xff596157)
@@ -35,18 +33,10 @@ object R {
             val content = textLight
         }
 
-//        val primary = Color(0xff52414C)
-//        val primaryContent = textLight
-//
-//        val secondary = Color(0xff5B8C5A)
-//        val secondaryContent = textLight
-//
-//        val tertiary = Color(0xffCFD186)
-//        val tertiaryContent = textLight
-//
-//        val warning = Color(0xffE3655B)
-//        val warningContent = textLight
-
+        object Disabled {
+            val background = Color(0xffbababa)
+            val content = Color(0xff4a4a4a)
+        }
 
         val dividerColor = Color(0xffadadad)
 
@@ -56,13 +46,9 @@ object R {
 
         val errorText = Color(0xffc23838)
 
-        val debugRed = Color(0xffff0000)
-        val debugGreen = Color(0xff00ff00)
-        val debugBlue = Color(0xff0000ff)
-
         val transparent = Color(0x00000000)
 
-        val disabledBackground = Color(0xffbababa)
+        //val disabledBackground = Color(0xffbababa)
 
         val codeBlock = Color(0xffe0e0e0)
 
@@ -99,6 +85,11 @@ object R {
                 var background = Tertiary.background
                 var text = Tertiary.content
             }
+        }
+
+        object OutlinedTextField {
+            val focusedBorderColor = R.Color.Primary.background
+            val focusedLabelColor = R.Color.Primary.background
         }
     }
 }

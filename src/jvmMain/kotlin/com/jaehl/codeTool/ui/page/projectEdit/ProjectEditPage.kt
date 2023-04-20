@@ -51,7 +51,11 @@ fun ProjectEditPage(
                     value = viewModel.projectName.value,
                     onValueChange = { viewModel.onProjectNameChange(it) },
                     label = { Text("Name") },
-                    modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+                    modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                        focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+                    )
                 )
 
                 Picker(
@@ -172,7 +176,11 @@ fun ProjectVariable(
                 viewModel.onProjectVariableNameChange(index, it)
             },
             label = { Text("Name") },
-            modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+            modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+            )
         )
 
         Picker(
@@ -190,7 +198,11 @@ fun ProjectVariable(
                 viewModel.onProjectVariableValueChange(index, it)
             },
             label = { Text("Value") },
-            modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+            modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+            )
         )
     }
 

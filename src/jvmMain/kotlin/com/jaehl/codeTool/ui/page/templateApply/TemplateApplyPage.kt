@@ -103,6 +103,10 @@ fun MainPannel(
                         value = variable.value,
                         onValueChange = {viewModel.onVariableStringChange(index, it)},
                         label = { Text(variable.name) },
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                            focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+                        )
                     )
                 }
                 is TemplateApplyViewModel.VariablePath -> {

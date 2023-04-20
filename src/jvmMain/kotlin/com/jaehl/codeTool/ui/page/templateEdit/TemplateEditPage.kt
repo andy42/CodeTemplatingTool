@@ -123,7 +123,11 @@ fun MainPannel(
             isError = (viewModel.name.value.error != null),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 5.dp)
+                .padding(top = 5.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+            )
         )
         if(viewModel.name.value.error != null) {
             Text(text = viewModel.name.value.error ?: "", color = R.Color.errorText)
@@ -224,7 +228,11 @@ fun TemplateVariable(
                 viewModel.onTemplateVariableNameChange(index, it)
             },
             label = { Text("Name") },
-            modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+            modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+            )
         )
 
         Picker(
@@ -243,7 +251,11 @@ fun TemplateVariable(
                     viewModel.onTemplateVariableStartPathChange(index, it)
                 },
                 label = { Text("Start Path") },
-                modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+                modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                    focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+                )
             )
         }
 
@@ -253,7 +265,11 @@ fun TemplateVariable(
                 viewModel.onTemplateVariableDefaultChange(index, it)
             },
             label = { Text("Default") },
-            modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+            modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+            )
         )
     }
 }
@@ -279,7 +295,11 @@ fun FilePannel(
             isError = (viewModel.templateFilePath.value.error != null),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 5.dp)
+                .padding(top = 5.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+            )
         )
         if(viewModel.templateFilePath.value.error != null) {
             Text(text = viewModel.templateFilePath.value.error ?: "", color = R.Color.errorText)
@@ -294,7 +314,11 @@ fun FilePannel(
             isError = (viewModel.templateFilePathDestination.value.error != null),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 5.dp)
+                .padding(top = 5.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+            )
         )
         if(viewModel.templateFilePathDestination.value.error != null) {
             Text(text = viewModel.templateFilePathDestination.value.error ?: "", color = R.Color.errorText)
