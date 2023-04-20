@@ -10,12 +10,14 @@ import com.jaehl.codeTool.data.repo.TemplateRepo
 import com.jaehl.codeTool.data.templateCreator.TemplateCreator
 import com.jaehl.codeTool.data.templateParser.TemplateParser
 import com.jaehl.codeTool.extensions.postSwap
+import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogConfig
 import com.jaehl.codeTool.ui.util.ViewModel
 import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.nio.file.Path
+import java.nio.file.Paths
 
 class TemplateApplyViewModel(
     private val logger : Logger,
@@ -23,7 +25,8 @@ class TemplateApplyViewModel(
     private val templateParser: TemplateParser,
     private val templateCreator : TemplateCreator,
     private val templateRepo : TemplateRepo,
-    private val showFolderPickerDialog : (requestId : String, startPath : String) -> Unit
+    private val showFolderPickerDialog : (requestId : String, startPath : String) -> Unit,
+    private val showWarningDialog : (warningDialogConfig : WarningDialogConfig) -> Unit
 ) : ViewModel() {
 
     private lateinit var project : Project
@@ -110,13 +113,34 @@ class TemplateApplyViewModel(
         templateFileOutputs.postSwap(output)
     }
 
-    fun onSaveTemplateClick() = viewModelScope.launch {
+    private fun checkNewFilesDoNotOverridePrevious(output : List<TemplateFileOutput>) : Boolean {
+        output.forEach {
+            if(fileUtil.fileExists(Paths.get(it.path))){
+                return true
+            }
+        }
+        return false
+    }
+    fun onApplyTemplateClick() = viewModelScope.launch {
         if( !areVariablesSet()) return@launch
 
         val output : List<TemplateFileOutput> = parseTemplate()
         templateFileOutputs.postSwap(output)
 
-        templateCreator.createFile(output)
+        if(checkNewFilesDoNotOverridePrevious(output)){
+            showWarningDialog(
+                WarningDialogConfig(
+                    message = "The current template settings will override current files, do you wish to continue",
+                    acceptText = "yes",
+                    declineText = "No",
+                    acceptCallBack = {
+                        templateCreator.createFile(output)
+                    }
+                )
+            )
+        } else {
+            templateCreator.createFile(output)
+        }
     }
 
     fun onTemplateSelectClick(newTemplate : Template, index : Int) = viewModelScope.launch {

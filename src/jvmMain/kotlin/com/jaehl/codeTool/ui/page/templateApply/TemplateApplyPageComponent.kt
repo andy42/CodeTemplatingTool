@@ -15,6 +15,8 @@ import com.jaehl.codeTool.data.repo.TemplateRepo
 import com.jaehl.codeTool.data.templateCreator.TemplateCreator
 import com.jaehl.codeTool.data.templateParser.TemplateParser
 import com.jaehl.codeTool.ui.dialog.folderPicker.FolderPickerDialogComponent
+import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogComponent
+import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogConfig
 import com.jaehl.codeTool.ui.navigation.Component
 import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.Logger
@@ -31,7 +33,7 @@ class TemplateApplyPageComponent(
     private val onOpenTemplateList: () -> Unit
 ) : Component, ComponentContext by componentContext {
 
-    private val viewModel = TemplateApplyViewModel(logger, fileUtil, templateParser, templateCreator, templateRepo, ::showFolderPickerDialog)
+    private val viewModel = TemplateApplyViewModel(logger, fileUtil, templateParser, templateCreator, templateRepo, ::showFolderPickerDialog, ::showWarningDialog)
     private val dialogNavigation = OverlayNavigation<DialogConfig>()
 
     private val _dialog =
@@ -55,6 +57,22 @@ class TemplateApplyPageComponent(
                             viewModel.onProjectPathChange(requestId, path.replace(config.startPath, ""))
                         },
                         foldersOnly = true
+                    )
+                }
+                is DialogConfig.WarningDialog -> {
+                    WarningDialogComponent(
+                        componentContext = componentContext,
+                        logger = logger,
+                        config = config.warningDialogConfig.copy(
+                            acceptCallBack = {
+                                dialogNavigation.dismiss()
+                                config.warningDialogConfig.acceptCallBack()
+                            },
+                            declineCallBack = {
+                                dialogNavigation.dismiss()
+                                config.warningDialogConfig.declineCallBack()
+                            }
+                        )
                     )
                 }
             }
@@ -83,7 +101,19 @@ class TemplateApplyPageComponent(
         dialogNavigation.activate(DialogConfig.PackagePickerConfig(requestId = requestId, startPath = startPath))
     }
 
+    fun showWarningDialog (warningDialogConfig : WarningDialogConfig) {
+
+        dialogNavigation.activate(
+            DialogConfig.WarningDialog(
+                warningDialogConfig
+            )
+        )
+    }
+
     private sealed class DialogConfig : Parcelable {
         data class PackagePickerConfig(val requestId: String, val startPath: String) : DialogConfig()
+        data class WarningDialog(
+            val warningDialogConfig : WarningDialogConfig
+        ) : DialogConfig()
     }
 }

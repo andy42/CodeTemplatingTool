@@ -47,7 +47,7 @@ class ProjectEditViewModel(
         }
     }
 
-    fun onProjectNameChange(value : String) = viewModelScope.launch {
+    fun onProjectNameChange(value : String) {
         projectName.value = value
         isSaveEnabled.value = validateProject()
     }
@@ -134,6 +134,7 @@ class ProjectEditViewModel(
 
     fun save() = viewModelScope.launch {
         var newProject = Project(
+            id = project?.id ?: "",
             name = projectName.value,
             projectPath = projectPath.value,
             variable = projectVariables.toList()

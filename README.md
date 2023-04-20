@@ -64,11 +64,9 @@ a Project Variable is a variable that is accessible to any template
 
 a Template is a collection of Variable and template Files
 
-- on the "Home" page click "Edit Templates"
+- on the "Home" page click "Templates"
 - then on the "Templates" page click "Add Template" button
 - enter and name for the template
-- set a "Directory Path" for the template. this will be a relative path to the Code tool user folder. 
-For example a value of "\exampleTemplate" would be "C:\Users\bob\CodeTool\exampleTemplate"
 
 ![](/readmeScreenshots/templateEdit1.png)
 

@@ -123,7 +123,11 @@ fun MainPannel(
             isError = (viewModel.name.value.error != null),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 5.dp)
+                .padding(top = 5.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+            )
         )
         if(viewModel.name.value.error != null) {
             Text(text = viewModel.name.value.error ?: "", color = R.Color.errorText)
@@ -146,8 +150,8 @@ fun MainPannel(
             Button(
                 modifier = Modifier,
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = R.Color.deleteButtonBackground,
-                    contentColor = R.Color.deleteButtonText
+                    backgroundColor = R.Color.ButtonDelete.background,
+                    contentColor = R.Color.ButtonDelete.text
                 ),
                 onClick = {
                     viewModel.deleteTemplate()
@@ -158,6 +162,10 @@ fun MainPannel(
 
             Button(
                 modifier = Modifier,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = R.Color.Button.background,
+                    contentColor = R.Color.Button.text
+                ),
                 onClick = {
                     viewModel.addVariable()
                 }
@@ -167,6 +175,10 @@ fun MainPannel(
 
             Button(
                 modifier = Modifier,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = R.Color.Button.background,
+                    contentColor = R.Color.Button.text
+                ),
                 enabled = (viewModel.isSaveEnabled.value),
                 onClick = {
                     viewModel.save()
@@ -192,11 +204,11 @@ fun TemplateVariable(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(R.Color.cardSubTitleBackground)
+                .background(R.Color.Card.SubTitle.background)
         ) {
             Text(
                 text = if(templateVariable.name.isEmpty()) "Variable ${index +1}" else templateVariable.name,
-                color = R.Color.textLight,
+                color = R.Color.Card.SubTitle.text,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(start = 10.dp)
@@ -204,7 +216,7 @@ fun TemplateVariable(
             IconButton(
                 modifier = Modifier,
                 content = {
-                    Icon(Icons.Outlined.Delete, "Delete", tint = R.Color.textLight)
+                    Icon(Icons.Outlined.Delete, "Delete", tint = R.Color.Card.SubTitle.text)
                 }, onClick = {
                     viewModel.onTemplateVariableDelete(index)
                 }
@@ -216,7 +228,11 @@ fun TemplateVariable(
                 viewModel.onTemplateVariableNameChange(index, it)
             },
             label = { Text("Name") },
-            modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+            modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+            )
         )
 
         Picker(
@@ -235,7 +251,11 @@ fun TemplateVariable(
                     viewModel.onTemplateVariableStartPathChange(index, it)
                 },
                 label = { Text("Start Path") },
-                modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+                modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                    focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+                )
             )
         }
 
@@ -245,7 +265,11 @@ fun TemplateVariable(
                 viewModel.onTemplateVariableDefaultChange(index, it)
             },
             label = { Text("Default") },
-            modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+            modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+            )
         )
     }
 }
@@ -271,7 +295,11 @@ fun FilePannel(
             isError = (viewModel.templateFilePath.value.error != null),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 5.dp)
+                .padding(top = 5.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+            )
         )
         if(viewModel.templateFilePath.value.error != null) {
             Text(text = viewModel.templateFilePath.value.error ?: "", color = R.Color.errorText)
@@ -286,7 +314,11 @@ fun FilePannel(
             isError = (viewModel.templateFilePathDestination.value.error != null),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 5.dp)
+                .padding(top = 5.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+            )
         )
         if(viewModel.templateFilePathDestination.value.error != null) {
             Text(text = viewModel.templateFilePathDestination.value.error ?: "", color = R.Color.errorText)
@@ -312,8 +344,8 @@ fun FilePannel(
             Button(
                 modifier = Modifier,
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = R.Color.deleteButtonBackground,
-                    contentColor = R.Color.deleteButtonText
+                    backgroundColor = R.Color.ButtonDelete.background,
+                    contentColor = R.Color.ButtonDelete.text
                 ),
                 onClick = {
                     viewModel.deleteTemplateFile(templateFile.id)
@@ -325,6 +357,10 @@ fun FilePannel(
             Button(
                 modifier = Modifier,
                 enabled = (viewModel.isSaveEnabled.value),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = R.Color.Button.background,
+                    contentColor = R.Color.Button.text
+                ),
                 onClick = {
                     viewModel.saveTemplateFile(templateFile.id)
                 }

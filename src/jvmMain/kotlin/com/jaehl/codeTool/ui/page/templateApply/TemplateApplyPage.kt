@@ -103,6 +103,10 @@ fun MainPannel(
                         value = variable.value,
                         onValueChange = {viewModel.onVariableStringChange(index, it)},
                         label = { Text(variable.name) },
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = R.Color.OutlinedTextField.focusedBorderColor,
+                            focusedLabelColor = R.Color.OutlinedTextField.focusedLabelColor
+                        )
                     )
                 }
                 is TemplateApplyViewModel.VariablePath -> {
@@ -128,8 +132,12 @@ fun MainPannel(
         ) {
             Button(
                 modifier = Modifier,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = R.Color.Button.background,
+                    contentColor = R.Color.Button.text
+                ),
                 onClick = {
-                    viewModel.onSaveTemplateClick()
+                    viewModel.onApplyTemplateClick()
                 }
             ) {
                 Text(text = "Apply Template")
@@ -158,12 +166,13 @@ fun TemplateFile(
                 text = templateFileOutput.path,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(R.Color.primary)
+                    .background(R.Color.Tertiary.background)
                     .padding(top = 5.dp, bottom = 5.dp, start = 10.dp),
-                color = R.Color.textLight)
+                color = R.Color.Tertiary.content)
 
             Text(
                 text = templateFileOutput.data,
+                color = R.Color.textDark,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(R.Color.codeBlock)

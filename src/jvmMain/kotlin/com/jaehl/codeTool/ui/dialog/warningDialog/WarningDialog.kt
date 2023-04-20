@@ -1,5 +1,6 @@
 package com.jaehl.codeTool.ui.dialog.warningDialog
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
@@ -51,6 +52,10 @@ fun WarningDialog(
             ) {
                 Button(
                     modifier = Modifier,
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = R.Color.Button.background,
+                        contentColor = R.Color.Button.text
+                    ),
                     onClick = {
                         viewModel.onAcceptClick()
                     }
@@ -61,6 +66,11 @@ fun WarningDialog(
                     OutlinedButton(
                         modifier = Modifier
                             .padding(start = 20.dp),
+
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = R.Color.ButtonOutlined.text
+                        ),
+                        border = BorderStroke(1.dp, R.Color.ButtonOutlined.border),
                         onClick = {
                             viewModel.onDeclineClick()
                         }
