@@ -34,14 +34,14 @@ fun NavRowHeading(
             modifier = Modifier
                 .background(R.Color.transparent)
                 .padding(top = 3.dp, bottom = 3.dp),
-            color = R.Color.textDark,
+            color = R.Color.OnSurface.highEmphasis,
             maxLines = 1
         )
         if(icon != null) {
             IconButton(
                 modifier = Modifier,
                 content = {
-                    Icon(icon, iconDescription, tint = R.Color.textDark)
+                    Icon(icon, iconDescription, tint = R.Color.OnSurface.highEmphasis)
                 }, onClick = {
                     onIconClick?.invoke()
                 }

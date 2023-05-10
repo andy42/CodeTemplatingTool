@@ -1,14 +1,9 @@
 package com.jaehl.codeTool.ui.component
 
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import com.jaehl.codeTool.ui.R
 
 @Composable
 fun AppBar(
@@ -19,7 +14,7 @@ fun AppBar(
     var navigationIcon : @Composable (() -> Unit)? = null
     if(returnButton) navigationIcon = {
         IconButton(content = {
-            Icon(Icons.Outlined.ArrowBack, "back", tint = R.Color.TopAppBar.text)
+            Icon(Icons.Outlined.ArrowBack, "back", tint = MaterialTheme.colors.onPrimary)
         }, onClick = {
             onBackClick()
         })
@@ -27,12 +22,10 @@ fun AppBar(
 
     TopAppBar(
         title = {
-            Text(title, color = R.Color.TopAppBar.text)
+            Text(title)
         },
         navigationIcon = navigationIcon,
-        backgroundColor = R.Color.TopAppBar.background,
         actions = {
-
         }
     )
 }
