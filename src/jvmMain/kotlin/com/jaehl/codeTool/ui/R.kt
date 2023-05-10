@@ -22,9 +22,6 @@ object R {
         val rowBackgroundOdd = Color(0xffffffff)
         val rowBackgroundEven = Color(0xffededed)
 
-//        val textDark = Color(0xff000000)
-//        val textLight = Color(0xffffffff)
-
         val primary50 = Color(0xffE9F5E7)
         val primary100 = Color(0xffCAE6C4)
         val primary200 = Color(0xffA8D79E)
