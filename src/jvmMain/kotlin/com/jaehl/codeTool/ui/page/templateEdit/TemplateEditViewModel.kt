@@ -202,10 +202,10 @@ class TemplateEditViewModel @Inject constructor(
         val template = this@TemplateEditViewModel.template ?: return true
 
         val templateFile = files[navRowFileSelect.index].toTemplateFile()
-        if(templateFile?.path != templateFilePath.value.value){
+        if(templateFile.path != templateFilePath.value.value){
             return false
         }
-        if(templateFile?.pathDestination != templateFilePathDestination.value.value){
+        if(templateFile.pathDestination != templateFilePathDestination.value.value){
             return false
         }
 

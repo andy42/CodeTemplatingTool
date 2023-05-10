@@ -35,14 +35,7 @@ class TemplateApplyPageComponent(
     private val componentContext: ComponentContext,
     navBackListener : NavBackListener,
     navTemplateListener : NavTemplateListener,
-//    private val logger : Logger,
-//    private val fileUtil : FileUtil,
-//    private val templateRepo : TemplateRepo,
-//    private val templateParser: TemplateParser,
-//    private val templateCreator : TemplateCreator,
-    private val project : Project,
-//    private val onGoBackClicked: () -> Unit,
-//    private val onOpenTemplateList: () -> Unit
+    private val project : Project
 ) : Component,
     ComponentContext by componentContext,
     NavTemplateApplyDialogListener{

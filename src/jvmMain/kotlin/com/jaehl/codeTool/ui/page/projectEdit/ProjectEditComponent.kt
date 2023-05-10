@@ -43,16 +43,6 @@ class ProjectEditComponent(
     ComponentContext by componentContext,
     NavProjectEditDialogListener{
 
-//    private val viewModel = ProjectEditViewModel(
-//        logger,
-//        projectRepo,
-//        project,
-//        ::showFolderPickerDialog,
-//        ::showListPickerDialog,
-//        ::showDefaultVariablePickerDialog,
-//        onGoBackClicked,
-//        ::showCloseWithoutSavingDialog)
-
     @Inject
     lateinit var viewModel : ProjectEditViewModel
 
@@ -74,8 +64,6 @@ class ProjectEditComponent(
                     FolderPickerDialogComponent(
                         appComponent = appComponent,
                         componentContext = componentContext,
-//                        logger = logger,
-//                        fileUtil = fileUtil,
                         folderPickerDialogConfig = FolderPickerDialogConfig(
                             requestId = config.requestId,
                             onDismissed = {

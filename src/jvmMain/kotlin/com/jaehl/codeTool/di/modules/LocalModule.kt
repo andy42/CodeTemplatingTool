@@ -26,14 +26,7 @@ import dagger.Provides
 class LocalModule {
 
     @Provides
-    fun logger() : Logger {
-        return Logger()
-    }
-
-    @Provides
-    fun configuration() : Configuration {
-        return ConfigurationImp()
-    }
+    fun configuration(configuration : ConfigurationImp) : Configuration = configuration
 
     @Provides
     fun projectListLoader(logger : Logger, configuration : Configuration) : ObjectListLoader<Project>{
@@ -54,9 +47,7 @@ class LocalModule {
     }
 
     @Provides
-    fun osPathConverter() : OsPathConverter {
-        return OsPathConverterImp()
-    }
+    fun osPathConverter(osPathConverterImp : OsPathConverterImp) : OsPathConverter = osPathConverterImp
 
     @Provides
     fun fileUtil(fileUtilImp : FileUtilImp) : FileUtil = fileUtilImp

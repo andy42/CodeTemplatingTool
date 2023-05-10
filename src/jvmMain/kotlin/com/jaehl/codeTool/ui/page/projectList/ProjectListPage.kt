@@ -33,7 +33,6 @@ fun ProjectListPage(
                     viewModel.onBackClick()
                 }
             )
-            val state : ScrollState = rememberScrollState()
 
             Column(
                 modifier = Modifier

@@ -22,29 +22,8 @@ data class FolderPickerDialogConfig(
 class FolderPickerDialogComponent(
     appComponent : AppComponent,
     private val componentContext: ComponentContext,
-    //private val logger : Logger,
-    //private val fileUtil : FileUtil,
-    //private val requestId : String,
     private val folderPickerDialogConfig : FolderPickerDialogConfig
-//    private val onDismissed : () -> Unit,
-//    private val startPath : String? = null,
-//    private val subPathOnly : Boolean = false,
-//    private val onSelect : ((requestId : String, selectedFolder : String) -> Unit)? = null,
-//    private val onSelectMulti : ((requestId : String, selectedFolder : List<String>) -> Unit)? = null,
-//    private val foldersOnly : Boolean = false
 ) : Component, ComponentContext by componentContext {
-
-//    private val viewModel = FolderPickerViewModel(
-//        logger,
-//        fileUtil,
-//        requestId,
-//        onDismissed,
-//        startPath = startPath,
-//        subPathOnly = subPathOnly,
-//        onSelect = onSelect,
-//        onSelectMulti = onSelectMulti,
-//        foldersOnly = foldersOnly
-//    )
 
     @Inject
     lateinit var viewModel : FolderPickerViewModel

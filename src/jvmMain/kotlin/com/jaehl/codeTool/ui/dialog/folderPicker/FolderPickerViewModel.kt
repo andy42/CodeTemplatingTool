@@ -14,14 +14,7 @@ import kotlin.io.path.*
 
 class FolderPickerViewModel @Inject constructor(
     private val logger : Logger,
-    private val fileUtil : FileUtil,
-//    private val requestId : String,
-//    private val onDismissed : () -> Unit,
-//    private val startPath : String?,
-//    var subPathOnly : Boolean,
-//    private val onSelect : ((requestId : String, selectedFolder :  String) -> Unit)?,
-//    private val onSelectMulti : ((requestId : String, selectedFolders : List<String>) -> Unit)?,
-//    private val foldersOnly : Boolean
+    private val fileUtil : FileUtil
 ) : ViewModel() {
 
     private lateinit var config : FolderPickerDialogConfig

@@ -2,6 +2,7 @@ package com.jaehl.codeTool.ui.util
 
 import com.jaehl.codeTool.data.model.*
 import java.io.File
+import javax.inject.Inject
 
 interface OsPathConverter {
     fun getFileName(path : String) : String
@@ -10,7 +11,9 @@ interface OsPathConverter {
     fun convertPathsToOsFormat(template : Template) : Template
 }
 
-class OsPathConverterImp :  OsPathConverter{
+class OsPathConverterImp @Inject constructor(
+
+):  OsPathConverter{
 
     companion object {
         private const val localPathSeparator = "/"

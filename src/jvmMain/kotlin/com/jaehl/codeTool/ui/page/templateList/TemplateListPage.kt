@@ -33,7 +33,6 @@ fun TemplateListPage(
                 viewModel.onBackClick()
             }
         )
-        val state : ScrollState = rememberScrollState()
 
         Column(
             modifier = Modifier

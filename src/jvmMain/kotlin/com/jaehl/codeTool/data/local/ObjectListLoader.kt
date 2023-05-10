@@ -45,14 +45,14 @@ class  ObjectListJsonLoader<T>(
         return gson.fromJson<Array<T>>(fileString, type).toList()
     }
 
-    override fun save(data : List<T>) : Boolean {
+    override fun save(objects : List<T>) : Boolean {
         return try {
             val file = getFile()
             println("file : ${file.absoluteFile}")
             file.createNewFile()
 
             var gson = GsonBuilder().setPrettyPrinting().create()
-            var jsonString = gson.toJson(data)
+            var jsonString = gson.toJson(objects)
             file.writeText(jsonString, Charsets.UTF_8)
             true
         } catch (t : Throwable){
