@@ -3,16 +3,16 @@ package com.jaehl.codeTool.data.model
 import com.jaehl.codeTool.ui.util.OsPathConverter
 
 data class Project(
-    var id : String = "",
-    var name : String = "",
-    var projectPath : String = "",
-    var variable : List<ProjectVariable> = listOf()
+    val id : String = "",
+    val name : String = "",
+    val projectPath : String = "",
+    val variable : List<ProjectVariable> = listOf()
 )
 
 data class ProjectVariable(
-    var name : String = "",
-    var type : TemplateVariableType = TemplateVariableType.String,
-    var value : String = ""
+    val name : String = "",
+    val type : TemplateVariableType = TemplateVariableType.String,
+    val value : String = ""
 ) {
     companion object {
         fun createDefaults(osPathConverter : OsPathConverter) : List<ProjectVariable>{

@@ -10,32 +10,15 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.parcelable.Parcelable
-import com.google.gson.reflect.TypeToken
-import com.jaehl.codeTool.Configuration
-import com.jaehl.codeTool.ConfigurationImp
-import com.jaehl.codeTool.data.local.*
 import com.jaehl.codeTool.data.model.Project
 import com.jaehl.codeTool.data.model.Template
-import com.jaehl.codeTool.data.repo.ProjectRepo
-import com.jaehl.codeTool.data.repo.TemplateRepo
-import com.jaehl.codeTool.data.templateCreator.TemplateCreator
-import com.jaehl.codeTool.data.templateCreator.TemplateCreatorImp
-import com.jaehl.codeTool.data.templateParser.TemplateParser
-import com.jaehl.codeTool.data.templateParser.TemplateParserImp
 import com.jaehl.codeTool.di.AppComponent
 import com.jaehl.codeTool.di.DaggerAppComponent
 import com.jaehl.codeTool.ui.page.templateApply.TemplateApplyPageComponent
 import com.jaehl.codeTool.ui.page.projectEdit.ProjectEditComponent
 import com.jaehl.codeTool.ui.page.projectList.ProjectListComponent
 import com.jaehl.codeTool.ui.page.templateEdit.TemplateEditComponent
-import com.jaehl.codeTool.ui.page.templateEdit.TemplateEditValidator
-import com.jaehl.codeTool.ui.page.templateEdit.TemplateEditValidatorImp
 import com.jaehl.codeTool.ui.page.templateList.TemplateListComponent
-import com.jaehl.codeTool.ui.util.OsPathConverter
-import com.jaehl.codeTool.ui.util.OsPathConverterImp
-import com.jaehl.codeTool.util.FileUtil
-import com.jaehl.codeTool.util.FileUtilImp
-import com.jaehl.codeTool.util.Logger
 
 interface NavBackListener {
     fun navigateBack()

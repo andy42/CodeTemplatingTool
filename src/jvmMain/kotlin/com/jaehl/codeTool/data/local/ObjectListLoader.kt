@@ -51,8 +51,8 @@ class  ObjectListJsonLoader<T>(
             println("file : ${file.absoluteFile}")
             file.createNewFile()
 
-            var gson = GsonBuilder().setPrettyPrinting().create()
-            var jsonString = gson.toJson(objects)
+            val gson = GsonBuilder().setPrettyPrinting().create()
+            val jsonString = gson.toJson(objects)
             file.writeText(jsonString, Charsets.UTF_8)
             true
         } catch (t : Throwable){

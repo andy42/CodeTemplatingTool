@@ -36,13 +36,16 @@ class ProjectRepo @Inject constructor(
     }
 
     fun updateProject(project : Project) : Project{
-        if(project.id.isEmpty()){
-            project.id = createNewId()
+        var newProject = project
+        if(newProject.id.isEmpty()){
+            newProject = newProject.copy(
+                id = createNewId()
+            )
         }
-        projectMap[project.id] = project
+        projectMap[newProject.id] = newProject
         projectListLoader.save(projectMap.values.toList())
         projects.tryEmit(projectMap.values.toList())
-        return project
+        return newProject
     }
 
     fun deleteProject(id : String) {

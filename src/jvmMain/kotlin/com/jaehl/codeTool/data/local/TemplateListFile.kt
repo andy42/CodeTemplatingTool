@@ -45,8 +45,8 @@ class TemplateListFileImp(
             println("file : ${file.absoluteFile}")
             file.createNewFile()
 
-            var gson = GsonBuilder().setPrettyPrinting().create()
-            var jsonString = gson.toJson(templates)
+            val gson = GsonBuilder().setPrettyPrinting().create()
+            val jsonString = gson.toJson(templates)
             file.writeText(jsonString, Charsets.UTF_8)
             true
         } catch (t : Throwable){
