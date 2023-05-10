@@ -52,10 +52,6 @@ fun WarningDialog(
             ) {
                 Button(
                     modifier = Modifier,
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = R.Color.Button.background,
-                        contentColor = R.Color.Button.text
-                    ),
                     onClick = {
                         viewModel.onAcceptClick()
                     }
@@ -66,11 +62,6 @@ fun WarningDialog(
                     OutlinedButton(
                         modifier = Modifier
                             .padding(start = 20.dp),
-
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = R.Color.ButtonOutlined.text
-                        ),
-                        border = BorderStroke(1.dp, R.Color.ButtonOutlined.border),
                         onClick = {
                             viewModel.onDeclineClick()
                         }

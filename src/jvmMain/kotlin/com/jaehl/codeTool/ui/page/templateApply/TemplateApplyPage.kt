@@ -133,8 +133,8 @@ fun MainPannel(
             Button(
                 modifier = Modifier,
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = R.Color.Button.background,
-                    contentColor = R.Color.Button.text
+                    backgroundColor = MaterialTheme.colors.secondary,
+                    contentColor = MaterialTheme.colors.onSecondary
                 ),
                 onClick = {
                     viewModel.onApplyTemplateClick()
@@ -166,13 +166,13 @@ fun TemplateFile(
                 text = templateFileOutput.path,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(R.Color.Tertiary.background)
+                    .background(MaterialTheme.colors.primary)
                     .padding(top = 5.dp, bottom = 5.dp, start = 10.dp),
-                color = R.Color.Tertiary.content)
+                color = MaterialTheme.colors.onPrimary)
 
             Text(
                 text = templateFileOutput.data,
-                color = R.Color.textDark,
+                color = MaterialTheme.colors.onSurface,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(R.Color.codeBlock)

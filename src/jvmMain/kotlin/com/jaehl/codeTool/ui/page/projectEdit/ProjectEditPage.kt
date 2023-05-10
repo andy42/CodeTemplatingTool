@@ -83,10 +83,6 @@ fun ProjectEditPage(
                 ) {
                     Button(
                         modifier = Modifier,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = R.Color.ButtonDelete.background,
-                            contentColor = R.Color.ButtonDelete.text
-                        ),
                         onClick = {
                             viewModel.delete()
                         }
@@ -96,8 +92,8 @@ fun ProjectEditPage(
                     Button(
                         modifier = Modifier,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = R.Color.Button.background,
-                            contentColor = R.Color.Button.text
+                            backgroundColor = R.Color.error500,
+                            contentColor = R.Color.OnError.highEmphasis
                         ),
                         onClick = {
                             viewModel.addVariable()
@@ -108,10 +104,6 @@ fun ProjectEditPage(
 
                     Button(
                         modifier = Modifier,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = R.Color.Button.background,
-                            contentColor = R.Color.Button.text
-                        ),
                         onClick = {
                             viewModel.openDefaultVariablePickerDialog()
                         }
@@ -121,10 +113,6 @@ fun ProjectEditPage(
 
                     Button(
                         modifier = Modifier,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = R.Color.Button.background,
-                            contentColor = R.Color.Button.text
-                        ),
                         enabled = (viewModel.isSaveEnabled.value),
                         onClick = {
                             viewModel.save()

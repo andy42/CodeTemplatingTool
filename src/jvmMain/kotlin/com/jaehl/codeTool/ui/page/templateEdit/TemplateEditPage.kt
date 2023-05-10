@@ -150,8 +150,8 @@ fun MainPannel(
             Button(
                 modifier = Modifier,
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = R.Color.ButtonDelete.background,
-                    contentColor = R.Color.ButtonDelete.text
+                    backgroundColor = R.Color.error500,
+                    contentColor = R.Color.OnError.highEmphasis
                 ),
                 onClick = {
                     viewModel.deleteTemplate()
@@ -162,10 +162,6 @@ fun MainPannel(
 
             Button(
                 modifier = Modifier,
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = R.Color.Button.background,
-                    contentColor = R.Color.Button.text
-                ),
                 onClick = {
                     viewModel.addVariable()
                 }
@@ -175,10 +171,6 @@ fun MainPannel(
 
             Button(
                 modifier = Modifier,
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = R.Color.Button.background,
-                    contentColor = R.Color.Button.text
-                ),
                 enabled = (viewModel.isSaveEnabled.value),
                 onClick = {
                     viewModel.save()
@@ -344,8 +336,8 @@ fun FilePannel(
             Button(
                 modifier = Modifier,
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = R.Color.ButtonDelete.background,
-                    contentColor = R.Color.ButtonDelete.text
+                    backgroundColor = R.Color.error500,
+                    contentColor = R.Color.OnError.highEmphasis
                 ),
                 onClick = {
                     viewModel.deleteTemplateFile(templateFile.id)
@@ -357,10 +349,6 @@ fun FilePannel(
             Button(
                 modifier = Modifier,
                 enabled = (viewModel.isSaveEnabled.value),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = R.Color.Button.background,
-                    contentColor = R.Color.Button.text
-                ),
                 onClick = {
                     viewModel.saveTemplateFile(templateFile.id)
                 }

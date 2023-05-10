@@ -70,10 +70,6 @@ fun FolderPickerPage(
                     modifier = Modifier
                         .align(alignment = Alignment.Center)
                         .padding(top = 5.dp, bottom = 5.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = R.Color.Button.background,
-                        contentColor = R.Color.Button.text
-                    ),
                     enabled = (viewModel.selectedFolders.isNotEmpty()),
                     onClick = {
                         viewModel.submit()
@@ -101,11 +97,11 @@ fun FolderBreadcrumbChip(
                 }
             }
             .padding(start = 5.dp)
-            .background(if(selectable) R.Color.Tertiary.background else R.Color.Disabled.background)
+            .background(if(selectable) MaterialTheme.colors.secondary else R.Color.Disabled.background)
     ) {
         Text(
             text = name,
-            color = if(selectable) R.Color.Tertiary.content else R.Color.Disabled.content,
+            color = if(selectable) MaterialTheme.colors.onSecondary else R.Color.OnSurface.disabled,
             modifier = Modifier
                 .padding(5.dp)
         )

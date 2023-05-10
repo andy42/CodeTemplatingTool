@@ -1,5 +1,6 @@
 package com.jaehl.codeTool.ui.component
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +14,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.res.useResource
 import androidx.compose.ui.unit.dp
 import com.jaehl.codeTool.ui.R
 
@@ -72,7 +75,33 @@ fun NavRowTitle(
             if (selected) R.Color.rowSelectedText
             else if (hover) R.Color.rowHoverText
             else R.Color.rowText,
+            fontSize = R.Dimensions.navItemFontSize,
             maxLines = 1
+        )
+    }
+}
+
+@Preview
+@Composable
+fun preview() {
+    val fileBitmap = remember { useResource("file.png") { loadImageBitmap(it) } }
+    var selectedIndex = 3
+    Row {
+        Column(modifier = Modifier.width(200.dp)) {
+            for (titleIndex in (1..20))
+                NavRowTitle(
+                    Modifier.fillMaxWidth(),
+                    title = "test $titleIndex",
+                    iconBitmap = fileBitmap,
+                    selected = (titleIndex == selectedIndex),
+                    onClick = {
+                        selectedIndex = titleIndex
+                    }
+                )
+        }
+        VerticalDivider(
+            thickness = 1.dp,
+            color = R.Color.dividerColor
         )
     }
 }
