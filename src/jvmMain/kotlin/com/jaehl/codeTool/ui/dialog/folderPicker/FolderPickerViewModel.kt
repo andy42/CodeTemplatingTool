@@ -1,6 +1,7 @@
 package com.jaehl.codeTool.ui.dialog.folderPicker
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import com.jaehl.codeTool.extensions.postSwap
 import com.jaehl.codeTool.ui.util.ViewModel
 import com.jaehl.codeTool.util.FileUtil
@@ -8,20 +9,22 @@ import com.jaehl.codeTool.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
+import javax.inject.Inject
 import kotlin.io.path.*
 
-class FolderPickerViewModel(
+class FolderPickerViewModel @Inject constructor(
     private val logger : Logger,
     private val fileUtil : FileUtil,
-    private val requestId : String,
-    private val onDismissed : () -> Unit,
-    private val startPath : String?,
-    var subPathOnly : Boolean,
-    private val onSelect : ((requestId : String, selectedFolder :  String) -> Unit)?,
-    private val onSelectMulti : ((requestId : String, selectedFolders : List<String>) -> Unit)?,
-    private val foldersOnly : Boolean
+//    private val requestId : String,
+//    private val onDismissed : () -> Unit,
+//    private val startPath : String?,
+//    var subPathOnly : Boolean,
+//    private val onSelect : ((requestId : String, selectedFolder :  String) -> Unit)?,
+//    private val onSelectMulti : ((requestId : String, selectedFolders : List<String>) -> Unit)?,
+//    private val foldersOnly : Boolean
 ) : ViewModel() {
 
+    private lateinit var config : FolderPickerDialogConfig
     //the currently selected folder path
     private var folderPathList = ArrayList<String>()
 
@@ -36,12 +39,14 @@ class FolderPickerViewModel(
 
     var subPathStartIndex = 0
 
+    val subPathOnly = mutableStateOf(false)
+
     private suspend fun updateFolderBreadcrumb() {
         var newBreadcrumb = folderPathList.mapIndexed{ index, name ->
             FolderBreadcrumbItem(
                 pathIndex = index,
                 name = name,
-                selectable = if(subPathOnly) (index >= subPathStartIndex )else true
+                selectable = if(config.subPathOnly) (index >= subPathStartIndex )else true
             )
         }.takeLast(4)
 
@@ -49,10 +54,14 @@ class FolderPickerViewModel(
             newBreadcrumb
         )
     }
-    override fun init(viewModelScope: CoroutineScope) {
+    fun init(viewModelScope: CoroutineScope, folderPickerDialogConfig: FolderPickerDialogConfig) {
         super.init(viewModelScope)
 
+        this.config = folderPickerDialogConfig
+
         viewModelScope.launch {
+            subPathOnly.value = config.subPathOnly
+            val startPath = config.startPath
             if(startPath != null){
                 folderPathList = ArrayList(startPath.split(File.separator))
                 subPathStartIndex = folderPathList.size -1
@@ -66,7 +75,7 @@ class FolderPickerViewModel(
     }
 
     fun onCloseClick() = viewModelScope.launch {
-        onDismissed()
+        config.onDismissed()
     }
 
     private fun buildFolderPath() : String {
@@ -88,14 +97,14 @@ class FolderPickerViewModel(
                 )
             }
             .sortedByDescending { it.isFolder }
-            .filter{ if(foldersOnly) it.isFolder else true  }
+            .filter{ if(config.foldersOnly) it.isFolder else true  }
 
         folderItems.postSwap(items)
     }
 
     fun selectFolder(folderItem : FolderItem) {
 
-        if(onSelectMulti != null){
+        if(config.onSelectMulti != null){
             if(selectedFolders.contains(folderItem.path)){
                 selectedFolders.remove(folderItem.path)
             } else {
@@ -111,7 +120,7 @@ class FolderPickerViewModel(
         if(!folderItem.isFolder) return@launch
         folderPathList.add(folderItem.name)
         updateFolderBreadcrumb()
-        if(onSelectMulti == null){
+        if(config.onSelectMulti == null){
             selectedFolders.clear()
         }
 
@@ -140,9 +149,9 @@ class FolderPickerViewModel(
     }
 
     fun submit() {
-        onDismissed()
-        onSelect?.invoke(requestId, selectedFolders.toList().first())
-        onSelectMulti?.invoke(requestId, selectedFolders.toList())
+        config.onDismissed()
+        config.onSelect?.invoke(config.requestId, selectedFolders.toList().first())
+        config.onSelectMulti?.invoke(config.requestId, selectedFolders.toList())
     }
 }
 

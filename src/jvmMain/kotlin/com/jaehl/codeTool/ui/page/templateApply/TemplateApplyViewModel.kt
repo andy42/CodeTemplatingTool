@@ -11,6 +11,8 @@ import com.jaehl.codeTool.data.templateCreator.TemplateCreator
 import com.jaehl.codeTool.data.templateParser.TemplateParser
 import com.jaehl.codeTool.extensions.postSwap
 import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogConfig
+import com.jaehl.codeTool.ui.navigation.NavBackListener
+import com.jaehl.codeTool.ui.navigation.NavTemplateListener
 import com.jaehl.codeTool.ui.util.ViewModel
 import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.Logger
@@ -18,16 +20,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.nio.file.Path
 import java.nio.file.Paths
+import javax.inject.Inject
 
-class TemplateApplyViewModel(
+class TemplateApplyViewModel @Inject constructor(
     private val logger : Logger,
     private val fileUtil : FileUtil,
     private val templateParser: TemplateParser,
     private val templateCreator : TemplateCreator,
-    private val templateRepo : TemplateRepo,
-    private val showFolderPickerDialog : (requestId : String, startPath : String) -> Unit,
-    private val showWarningDialog : (warningDialogConfig : WarningDialogConfig) -> Unit
+    private val templateRepo : TemplateRepo
 ) : ViewModel() {
+
+    var navBackListener : NavBackListener? = null
+    var navTemplateListener : NavTemplateListener? = null
+    var navTemplateApplyDialogListener : NavTemplateApplyDialogListener? = null
 
     private lateinit var project : Project
 
@@ -128,7 +133,7 @@ class TemplateApplyViewModel(
         templateFileOutputs.postSwap(output)
 
         if(checkNewFilesDoNotOverridePrevious(output)){
-            showWarningDialog(
+            navTemplateApplyDialogListener?.showWarningDialog(
                 WarningDialogConfig(
                     message = "The current template settings will override current files, do you wish to continue",
                     acceptText = "yes",
@@ -182,7 +187,7 @@ class TemplateApplyViewModel(
         val temp = variables.toList()
         val startPath = (temp[index] as? VariablePath)?.startPath ?: return@launch
         if (!fileUtil.fileExists(Paths.get(startPath))){
-            showWarningDialog(
+            navTemplateApplyDialogListener?.showWarningDialog(
                 WarningDialogConfig(
                     title = "Error",
                     message = "picker start Path does not exist : $startPath"
@@ -190,7 +195,7 @@ class TemplateApplyViewModel(
             )
             return@launch
         }
-        showFolderPickerDialog(variableName, startPath)
+        navTemplateApplyDialogListener?.showFolderPickerDialog(variableName, startPath)
     }
 
     fun onProjectPathChange(requestId : String, path : String) = viewModelScope.launch {
@@ -199,6 +204,14 @@ class TemplateApplyViewModel(
         tempVariablePath?.value = path
         variables.postSwap(temp)
         onGenerateTemplate()
+    }
+
+    fun onOpenTemplateList() {
+        navTemplateListener?.openTemplateList()
+    }
+
+    fun onBackClick() {
+        navBackListener?.navigateBack()
     }
 
     data class PackageData(

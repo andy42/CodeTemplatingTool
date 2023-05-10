@@ -11,9 +11,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import java.nio.file.Path
+import javax.inject.Inject
 import kotlin.io.path.exists
 
-class TemplateRepo(
+class TemplateRepo @Inject constructor(
     private val logger: Logger,
     private val templateListLoader : ObjectListLoader<Template>,
     private val osPathConverter : OsPathConverter,

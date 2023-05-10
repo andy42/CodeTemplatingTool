@@ -17,9 +17,7 @@ import com.jaehl.codeTool.ui.component.*
 
 @Composable
 fun HomePage(
-    viewModel : TemplateApplyViewModel,
-    onGoBackClicked: () -> Unit,
-    onOpenTemplateList: () -> Unit
+    viewModel : TemplateApplyViewModel
 ) {
     Box {
         Column(modifier = Modifier.background(R.Color.pageBackground)) {
@@ -27,11 +25,11 @@ fun HomePage(
                 title = "Apply Template",
                 returnButton = true,
                 onBackClick = {
-                    onGoBackClicked()
+                    viewModel.onBackClick()
                 }
             )
             Row {
-                NavView(viewModel, onOpenTemplateList)
+                NavView(viewModel, viewModel::onOpenTemplateList)
                 VerticalDivider(
                     thickness = 1.dp,
                     color = R.Color.dividerColor

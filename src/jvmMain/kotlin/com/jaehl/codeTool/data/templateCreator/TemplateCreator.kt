@@ -6,13 +6,14 @@ import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.Logger
 import java.nio.file.Files
 import java.nio.file.Paths
+import javax.inject.Inject
 
 interface TemplateCreator {
     fun createFile(templateFileOutput : TemplateFileOutput) : Boolean
     fun createFile(list : List<TemplateFileOutput>) : Boolean
 }
 
-class TemplateCreatorImp(
+class TemplateCreatorImp @Inject constructor(
     private val fileUtil : FileUtil,
     private val logger: Logger
 ) : TemplateCreator {

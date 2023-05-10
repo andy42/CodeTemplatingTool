@@ -13,32 +13,40 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import com.jaehl.codeTool.data.model.Template
 import com.jaehl.codeTool.data.model.TemplateVariableType
 import com.jaehl.codeTool.data.repo.TemplateRepo
+import com.jaehl.codeTool.di.AppComponent
 import com.jaehl.codeTool.ui.dialog.ListPicker.ListPickerComponent
 import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogComponent
 import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogConfig
 import com.jaehl.codeTool.ui.navigation.Component
+import com.jaehl.codeTool.ui.navigation.NavBackListener
 import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.Logger
+import javax.inject.Inject
 
+interface NavTemplateEditDialogListener {
+    fun showTypeVariablePickerDialog(index : Int)
+    fun showWarningDialog(warningDialogConfig : WarningDialogConfig)
+}
 class TemplateEditComponent(
+    appComponent : AppComponent,
     private val componentContext: ComponentContext,
-    private val logger : Logger,
-    private val fileUtil : FileUtil,
-    private val templateRepo : TemplateRepo,
-    private val templateEditValidator : TemplateEditValidator,
-    private val template : Template?,
-    private val onClose: () -> Unit
-) : Component, ComponentContext by componentContext {
+    navBackListener : NavBackListener,
+    private val template : Template?
+) : Component,
+    ComponentContext by componentContext,
+    NavTemplateEditDialogListener{
 
-    private val viewModel = TemplateEditViewModel(
-        logger,
-        fileUtil,
-        templateRepo,
-        templateEditValidator,
-        template,
-        showTypeVariablePickerDialog = ::showTypeVariablePickerDialog,
-        onClose = onClose,
-        showWarningDialog = ::showWarningDialog)
+    @Inject
+    lateinit var viewModel : TemplateEditViewModel
+
+    @Inject
+    lateinit var logger : Logger
+
+    init {
+        appComponent.inject(this)
+        viewModel.navBackListener = navBackListener
+        viewModel.navTemplateEditDialogListener = this
+    }
 
     private val dialogNavigation = OverlayNavigation<DialogConfig>()
 
@@ -51,7 +59,6 @@ class TemplateEditComponent(
                 is DialogConfig.TemplateVariableTypePickerConfig -> {
                     ListPickerComponent<TemplateVariableType>(
                         componentContext = componentContext,
-                        logger = logger,
                         requestId = config.requestId,
                         onDismissed = {
                             dialogNavigation.dismiss()
@@ -67,8 +74,8 @@ class TemplateEditComponent(
                 }
                 is DialogConfig.WarningDialog -> {
                     WarningDialogComponent(
+                        appComponent = appComponent,
                         componentContext = componentContext,
-                        logger = logger,
                         config = config.warningDialogConfig.copy(
                             acceptCallBack = {
                                 dialogNavigation.dismiss()
@@ -89,7 +96,7 @@ class TemplateEditComponent(
 
         val scope = rememberCoroutineScope()
         LaunchedEffect(viewModel) {
-            viewModel.init(scope)
+            viewModel.init(scope, template)
         }
 
         TemplateEditPage(
@@ -101,11 +108,11 @@ class TemplateEditComponent(
         }
     }
 
-    fun showTypeVariablePickerDialog(index : Int) {
+    override fun showTypeVariablePickerDialog(index : Int) {
         dialogNavigation.activate(DialogConfig.TemplateVariableTypePickerConfig(requestId = index.toString()))
     }
 
-    fun showWarningDialog (warningDialogConfig : WarningDialogConfig) {
+    override fun showWarningDialog (warningDialogConfig : WarningDialogConfig) {
 
         dialogNavigation.activate(
             DialogConfig.WarningDialog(

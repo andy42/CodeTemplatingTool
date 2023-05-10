@@ -40,7 +40,7 @@ fun FolderPickerPage(
             Row(
                 modifier = Modifier.padding(5.dp)
             ) {
-                if(!viewModel.subPathOnly) {
+                if(!viewModel.subPathOnly.value) {
                     FolderBreadcrumbChip(
                         viewModel = viewModel,
                         name = "...",

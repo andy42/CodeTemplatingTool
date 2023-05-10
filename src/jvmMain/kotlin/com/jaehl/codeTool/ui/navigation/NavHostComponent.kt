@@ -22,6 +22,8 @@ import com.jaehl.codeTool.data.templateCreator.TemplateCreator
 import com.jaehl.codeTool.data.templateCreator.TemplateCreatorImp
 import com.jaehl.codeTool.data.templateParser.TemplateParser
 import com.jaehl.codeTool.data.templateParser.TemplateParserImp
+import com.jaehl.codeTool.di.AppComponent
+import com.jaehl.codeTool.di.DaggerAppComponent
 import com.jaehl.codeTool.ui.page.templateApply.TemplateApplyPageComponent
 import com.jaehl.codeTool.ui.page.projectEdit.ProjectEditComponent
 import com.jaehl.codeTool.ui.page.projectList.ProjectListComponent
@@ -35,38 +37,29 @@ import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.FileUtilImp
 import com.jaehl.codeTool.util.Logger
 
+interface NavBackListener {
+    fun navigateBack()
+}
+
+interface NavProjectListener {
+    fun openProjectEdit(project : Project?)
+}
+
+interface NavTemplateListener {
+    fun openTemplateEdit(template : Template?)
+    fun openTemplateList()
+    fun openTemplateApply(project : Project)
+}
 class NavHostComponent(
     componentContext: ComponentContext,
-) : Component, ComponentContext by componentContext {
+) : Component,
+    ComponentContext by componentContext,
+    NavBackListener,
+    NavProjectListener,
+    NavTemplateListener
+{
 
-    private val configuration : Configuration = ConfigurationImp()
-    private val logger : Logger = Logger()
-    private val fileUtil: FileUtil = FileUtilImp(logger)
-    private val templateParser: TemplateParser = TemplateParserImp(fileUtil, logger)
-
-    private val templateListFile : TemplateListFile = TemplateListFileImp(logger)
-
-    private val templateListLoader : ObjectListLoader<Template> = ObjectListJsonLoader(
-        logger = logger,
-        type = object : TypeToken<Array<Template>>() {}.type,
-        projectUserDir = configuration.getProjectUserDir(),
-        templateListFile = configuration.getTemplateListFile())
-
-    private val osPathConverter : OsPathConverter = OsPathConverterImp()
-
-    private val templateRepo : TemplateRepo = TemplateRepo(logger, templateListLoader, osPathConverter, fileUtil)
-
-    private val templateEditValidator : TemplateEditValidator = TemplateEditValidatorImp(fileUtil, templateRepo)
-
-    private val projectListLoader : ObjectListLoader<Project> = ObjectListJsonLoader(
-        logger = logger,
-        type = object : TypeToken<Array<Project>>() {}.type,
-        projectUserDir = configuration.getProjectUserDir(),
-        templateListFile = configuration.getProjectListFile())
-
-    private val projectRepo : ProjectRepo = ProjectRepo(logger, projectListLoader, osPathConverter)
-
-    private val templateCreator : TemplateCreator = TemplateCreatorImp(fileUtil, logger)
+    private val appComponent: AppComponent = DaggerAppComponent.create()
 
     private val navigation = StackNavigation<ScreenConfig>()
 
@@ -84,69 +77,58 @@ class NavHostComponent(
     ): Component {
         return when (screenConfig) {
             is ScreenConfig.TemplateApply -> TemplateApplyPageComponent(
-                componentContext,
-                logger,
-                fileUtil,
-                templateRepo,
-                templateParser,
-                templateCreator,
-                screenConfig.project,
-                ::onGoBackClicked,
-                ::onOpenTemplateList
+                appComponent = appComponent,
+                componentContext = componentContext,
+                navBackListener = this,
+                navTemplateListener = this,
+                project = screenConfig.project
             )
             is ScreenConfig.ProjectEdit -> ProjectEditComponent(
-                componentContext,
-                logger,
-                osPathConverter,
-                projectRepo,
-                fileUtil,
-                screenConfig.project,
-                ::onGoBackClicked
+                appComponent = appComponent,
+                componentContext = componentContext,
+                navBackListener = this,
+                project = screenConfig.project
             )
             is ScreenConfig.ProjectList -> ProjectListComponent(
-                componentContext,
-                logger,
-                projectRepo,
-                ::onProjectSelected,
-                ::onProjectEdit,
-                onTemplatesEdit = ::onOpenTemplateList,
-                ::onGoBackClicked
+                appComponent = appComponent,
+                componentContext = componentContext,
+                navBackListener = this,
+                navProjectListener = this,
+                navTemplateListener = this
             )
             is ScreenConfig.TemplateList -> TemplateListComponent(
-                componentContext,
-                logger,
-                templateRepo,
-                ::onGoBackClicked,
-                ::onOpenTemplateEdit
+                appComponent = appComponent,
+                componentContext = componentContext,
+                navBackListener = this,
+                navTemplateListener = this
             )
             is ScreenConfig.TemplateEdit -> TemplateEditComponent(
-                componentContext,
-                logger,
-                fileUtil,
-                templateRepo,
-                templateEditValidator,
-                screenConfig.template,
-                ::onGoBackClicked
+                appComponent = appComponent,
+                componentContext = componentContext,
+                navBackListener = this,
+                template = screenConfig.template
             )
         }
     }
 
-    private fun onOpenTemplateEdit(template : Template?){
+    override fun navigateBack() {
+        navigation.pop()
+    }
+
+    override fun openProjectEdit(project: Project?) {
+        navigation.push(ScreenConfig.ProjectEdit(project))
+    }
+
+    override fun openTemplateEdit(template: Template?) {
         navigation.push(ScreenConfig.TemplateEdit(template))
     }
-    private fun onOpenTemplateList(){
+
+    override fun openTemplateList() {
         navigation.push(ScreenConfig.TemplateList)
     }
 
-    private fun onProjectEdit(project : Project?){
-        navigation.push(ScreenConfig.ProjectEdit(project))
-    }
-    private fun onProjectSelected(project : Project){
+    override fun openTemplateApply(project: Project) {
         navigation.push(ScreenConfig.TemplateApply(project))
-    }
-
-    private fun onGoBackClicked() {
-        navigation.pop()
     }
 
     @OptIn(ExperimentalDecomposeApi::class)

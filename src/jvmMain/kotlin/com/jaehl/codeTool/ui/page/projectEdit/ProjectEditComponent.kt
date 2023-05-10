@@ -12,34 +12,55 @@ import com.jaehl.codeTool.data.model.ProjectVariable
 import com.jaehl.codeTool.data.model.TemplateVariableType
 
 import com.jaehl.codeTool.data.repo.ProjectRepo
+import com.jaehl.codeTool.di.AppComponent
 import com.jaehl.codeTool.ui.dialog.ListPicker.ListPickerComponent
 import com.jaehl.codeTool.ui.dialog.folderPicker.FolderPickerDialogComponent
+import com.jaehl.codeTool.ui.dialog.folderPicker.FolderPickerDialogConfig
 import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogComponent
 import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogConfig
 import com.jaehl.codeTool.ui.navigation.Component
+import com.jaehl.codeTool.ui.navigation.NavBackListener
+import com.jaehl.codeTool.ui.navigation.NavTemplateListener
 import com.jaehl.codeTool.ui.util.OsPathConverter
 import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.Logger
+import javax.inject.Inject
 
+interface NavProjectEditDialogListener {
+    fun showFolderPickerDialog(currentPath : String?)
+    fun showListPickerDialog(index : Int)
+    fun showDefaultVariablePickerDialog(defaultVariable : List<ProjectVariable>)
+    fun showCloseWithoutSavingDialog()
+
+}
 class ProjectEditComponent(
+    appComponent : AppComponent,
     private val componentContext: ComponentContext,
-    private val logger : Logger,
-    private val osPathConverter : OsPathConverter,
-    private val projectRepo : ProjectRepo,
-    private val fileUtil : FileUtil,
+    navBackListener : NavBackListener,
     private val project : Project?,
-    private val onGoBackClicked: () -> Unit
-) : Component, ComponentContext by componentContext {
 
-    private val viewModel = ProjectEditViewModel(
-        logger,
-        projectRepo,
-        project,
-        ::showFolderPickerDialog,
-        ::showListPickerDialog,
-        ::showDefaultVariablePickerDialog,
-        onGoBackClicked,
-        ::showCloseWithoutSavingDialog)
+) : Component,
+    ComponentContext by componentContext,
+    NavProjectEditDialogListener{
+
+//    private val viewModel = ProjectEditViewModel(
+//        logger,
+//        projectRepo,
+//        project,
+//        ::showFolderPickerDialog,
+//        ::showListPickerDialog,
+//        ::showDefaultVariablePickerDialog,
+//        onGoBackClicked,
+//        ::showCloseWithoutSavingDialog)
+
+    @Inject
+    lateinit var viewModel : ProjectEditViewModel
+
+    init {
+        appComponent.inject(this)
+        viewModel.navBackListener = navBackListener
+        viewModel.navProjectEditDialogListener = this
+    }
 
     private val dialogNavigation = OverlayNavigation<DialogConfig>()
 
@@ -51,25 +72,27 @@ class ProjectEditComponent(
             return@childOverlay when(config) {
                 is DialogConfig.FolderPickerConfig -> {
                     FolderPickerDialogComponent(
+                        appComponent = appComponent,
                         componentContext = componentContext,
-                        logger = logger,
-                        fileUtil = fileUtil,
-                        requestId = config.requestId,
-                        onDismissed = {
-                            dialogNavigation.dismiss()
-                        },
-                        startPath = config.currentPath ?: fileUtil.getUserDir(),
-                        onSelect = { requestId, path ->
-                            viewModel.onProjectPathChange(requestId, path)
-                        },
-                        foldersOnly = true
+//                        logger = logger,
+//                        fileUtil = fileUtil,
+                        folderPickerDialogConfig = FolderPickerDialogConfig(
+                            requestId = config.requestId,
+                            onDismissed = {
+                                dialogNavigation.dismiss()
+                            },
+                            startPath = config.currentPath,
+                            onSelect = { requestId, path ->
+                                viewModel.onProjectPathChange(requestId, path)
+                            },
+                            foldersOnly = true
+                        )
                     )
                 }
 
                 is DialogConfig.TemplateVariableTypePickerConfig -> {
                     ListPickerComponent<TemplateVariableType>(
                         componentContext = componentContext,
-                        logger = logger,
                         requestId = config.requestId,
                         onDismissed = {
                             dialogNavigation.dismiss()
@@ -86,13 +109,12 @@ class ProjectEditComponent(
                 is DialogConfig.DefaultVariablePickerConfig -> {
                     ListPickerComponent<ProjectVariable>(
                         componentContext = componentContext,
-                        logger = logger,
                         requestId = config.requestId,
                         onDismissed = {
                             dialogNavigation.dismiss()
                         },
                         title = "Template Variable Type",
-                        list = ProjectVariable.createDefaults(osPathConverter),
+                        list = config.defaultVariable,
                         rowTitle = { it.name },
                         onSelect = { requestId, selected ->
                             viewModel.onAddDefaultVariable(selected)
@@ -102,8 +124,8 @@ class ProjectEditComponent(
                 }
                 is DialogConfig.SaveWarningConfig -> {
                     WarningDialogComponent(
+                        appComponent = appComponent,
                         componentContext = componentContext,
-                        logger = logger,
                         config = WarningDialogConfig(
                             title = "Warning",
                             message = "Do you want to close without saving?",
@@ -123,26 +145,26 @@ class ProjectEditComponent(
 
         }
 
-    fun showFolderPickerDialog(currentPath : String?) {
+    override fun showFolderPickerDialog(currentPath : String?) {
         dialogNavigation.activate(DialogConfig.FolderPickerConfig(requestId = "", currentPath = currentPath))
     }
 
-    fun showListPickerDialog(index : Int) {
+    override fun showListPickerDialog(index : Int) {
         dialogNavigation.activate(DialogConfig.TemplateVariableTypePickerConfig(requestId = index.toString()))
     }
 
-    fun showDefaultVariablePickerDialog() {
-        dialogNavigation.activate(DialogConfig.DefaultVariablePickerConfig(requestId = ""))
+    override fun showDefaultVariablePickerDialog(defaultVariable : List<ProjectVariable>) {
+        dialogNavigation.activate(DialogConfig.DefaultVariablePickerConfig(requestId = "", defaultVariable = defaultVariable))
     }
 
-    fun showCloseWithoutSavingDialog() {
+    override fun showCloseWithoutSavingDialog() {
         dialogNavigation.activate(DialogConfig.SaveWarningConfig)
     }
 
     @Composable
     override fun render() {
         val scope = rememberCoroutineScope()
-        LaunchedEffect(viewModel) {
+        LaunchedEffect(viewModel, project) {
             viewModel.init(scope)
         }
 
@@ -158,7 +180,7 @@ class ProjectEditComponent(
     private sealed class DialogConfig : Parcelable {
         data class FolderPickerConfig(val requestId: String, val currentPath : String?) : DialogConfig()
         data class  TemplateVariableTypePickerConfig(val requestId: String) : DialogConfig()
-        data class  DefaultVariablePickerConfig(val requestId: String) : DialogConfig()
+        data class  DefaultVariablePickerConfig(val requestId: String, val defaultVariable : List<ProjectVariable>) : DialogConfig()
         object SaveWarningConfig : DialogConfig()
     }
 }

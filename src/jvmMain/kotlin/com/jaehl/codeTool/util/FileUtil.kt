@@ -5,6 +5,7 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
+import javax.inject.Inject
 import kotlin.io.path.exists
 
 
@@ -26,7 +27,7 @@ interface FileUtil {
 
 
 }
-class FileUtilImp(
+class FileUtilImp @Inject constructor(
     private val logger: Logger
 ) : FileUtil{
     override fun createDirectory(path : Path) {

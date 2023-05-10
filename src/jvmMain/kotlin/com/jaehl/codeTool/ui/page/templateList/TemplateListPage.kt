@@ -18,8 +18,7 @@ import com.jaehl.codeTool.ui.component.AppBar
 
 @Composable
 fun TemplateListPage(
-    viewModel : TemplateListViewModel,
-    onGoBackClicked: () -> Unit
+    viewModel : TemplateListViewModel
 ) {
     Column(
         modifier = Modifier
@@ -31,7 +30,7 @@ fun TemplateListPage(
             title = "Templates",
             returnButton = true,
             onBackClick = {
-                onGoBackClicked()
+                viewModel.onBackClick()
             }
         )
         val state : ScrollState = rememberScrollState()

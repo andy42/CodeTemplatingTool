@@ -4,17 +4,21 @@ import androidx.compose.runtime.mutableStateListOf
 import com.jaehl.codeTool.data.model.Template
 import com.jaehl.codeTool.data.repo.TemplateRepo
 import com.jaehl.codeTool.extensions.postSwap
+import com.jaehl.codeTool.ui.navigation.NavBackListener
+import com.jaehl.codeTool.ui.navigation.NavTemplateListener
 import com.jaehl.codeTool.ui.util.ViewModel
 import com.jaehl.codeTool.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class TemplateListViewModel(
+class TemplateListViewModel @Inject constructor(
     private val logger : Logger,
-    private val templateRepo : TemplateRepo,
-    private val onOpenTemplateEdit: (template : Template?) -> Unit
+    private val templateRepo : TemplateRepo
 ) : ViewModel() {
 
+    var navBackListener : NavBackListener? = null
+    var navTemplateListener : NavTemplateListener? = null
     var templates = mutableStateListOf<Template>()
         private set
 
@@ -28,11 +32,15 @@ class TemplateListViewModel(
         }
     }
 
+    fun onBackClick() {
+        navBackListener?.navigateBack()
+    }
+
     fun onTemplateSelectClick(template : Template) {
-        onOpenTemplateEdit(template)
+        navTemplateListener?.openTemplateEdit(template)
     }
 
     fun onTemplateAddClick() {
-        onOpenTemplateEdit(null)
+        navTemplateListener?.openTemplateEdit(null)
     }
 }

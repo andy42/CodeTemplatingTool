@@ -7,25 +7,27 @@ import com.jaehl.codeTool.data.repo.TemplateRepo
 import com.jaehl.codeTool.extensions.postSwap
 import com.jaehl.codeTool.ui.TextFieldData
 import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogConfig
+import com.jaehl.codeTool.ui.navigation.NavBackListener
 import com.jaehl.codeTool.ui.util.ViewModel
 import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
+import javax.inject.Inject
 
-class TemplateEditViewModel(
+class TemplateEditViewModel @Inject constructor(
     private val logger : Logger,
-    private val fileUtil : FileUtil,
     private val templateRepo : TemplateRepo,
-    private val templateEditValidator : TemplateEditValidator,
-    private var template : Template?,
-    private val showTypeVariablePickerDialog : (index : Int) -> Unit,
-    private val onClose: () -> Unit,
-    private val showWarningDialog: (warningDialogConfig : WarningDialogConfig) -> Unit
+    private val templateEditValidator : TemplateEditValidator
 ) : ViewModel(), TemplateEditValidatorListener {
 
-    var name = mutableStateOf<TextFieldData>(TextFieldData(value = template?.name ?: ""))
+    private var template : Template? = null
+
+    var navBackListener : NavBackListener? = null
+    var navTemplateEditDialogListener : NavTemplateEditDialogListener? = null
+
+    var name = mutableStateOf<TextFieldData>(TextFieldData())
 
     var variables = mutableStateListOf<TemplateVariable>()
     var files = mutableStateListOf<TemplateFileViewModel>()
@@ -41,13 +43,17 @@ class TemplateEditViewModel(
     var templateFilePathDestination = mutableStateOf<TextFieldData>(TextFieldData())
     var templateFileData = mutableStateOf<String>("")
 
-    override fun init(viewModelScope: CoroutineScope) {
+    fun init(viewModelScope: CoroutineScope, template : Template?) {
         super.init(viewModelScope)
+
+        this.template = template
 
         templateEditValidator.setValidatorListener(this)
 
         viewModelScope.launch {
             val template = this@TemplateEditViewModel.template
+
+            name.value = TextFieldData(value = template?.name ?: "")
             if(template != null) {
                 loadTemplateFiles(template = template)
             }
@@ -94,7 +100,7 @@ class TemplateEditViewModel(
         if(checkIfCurrentPageSaved()) {
             onChangeNavPage(newNavRowGeneralInfoSelect)
         } else {
-            showWarningDialog(
+            navTemplateEditDialogListener?.showWarningDialog(
                 WarningDialogConfig(
                     message = "Do you want to change page without saving? your current changes will be lost",
                     acceptText = "yes",
@@ -113,7 +119,7 @@ class TemplateEditViewModel(
         if(checkIfCurrentPageSaved()) {
             onChangeNavPage(newNavRowFileSelect)
         } else {
-            showWarningDialog(
+            navTemplateEditDialogListener?.showWarningDialog(
                 WarningDialogConfig(
                     message = "Do you want to change page without saving? your current changes will be lost",
                     acceptText = "yes",
@@ -131,7 +137,7 @@ class TemplateEditViewModel(
     }
 
     fun onTemplateVariableTypeClick(variableIndex : Int ) {
-        showTypeVariablePickerDialog(variableIndex)
+        navTemplateEditDialogListener?.showTypeVariablePickerDialog(variableIndex)
     }
 
     fun onTemplateVariableTypeChange(index : Int, type : TemplateVariableType) = viewModelScope.launch {
@@ -171,7 +177,7 @@ class TemplateEditViewModel(
     fun addTemplateFile() = viewModelScope.launch {
         val template = this@TemplateEditViewModel.template
         if(template == null){
-            showWarningDialog(
+            navTemplateEditDialogListener?.showWarningDialog(
                 WarningDialogConfig(
                     message = "To add a file, you most first save"
                 )
@@ -263,7 +269,7 @@ class TemplateEditViewModel(
     fun deleteTemplate() = viewModelScope.launch {
         template?.let {
             templateRepo.deleteTemplate(it)
-            onClose()
+            navBackListener?.navigateBack()
         }
     }
     fun save() = viewModelScope.launch {
@@ -280,9 +286,9 @@ class TemplateEditViewModel(
 
     fun onCloseClick() {
         if(checkIfCurrentPageSaved()){
-            onClose()
+            navBackListener?.navigateBack()
         } else {
-            showWarningDialog(
+            navTemplateEditDialogListener?.showWarningDialog(
                 WarningDialogConfig(
                     message = "Do you want to close without saving? your current changes will be lost",
                     acceptText = "yes",
@@ -297,7 +303,7 @@ class TemplateEditViewModel(
     }
 
     fun closeWithoutSaving() {
-        onClose()
+        navBackListener?.navigateBack()
     }
 
     override fun onTemplateNameError(error: String) {

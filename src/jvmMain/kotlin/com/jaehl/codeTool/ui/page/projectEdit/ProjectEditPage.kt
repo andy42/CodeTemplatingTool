@@ -83,18 +83,19 @@ fun ProjectEditPage(
                 ) {
                     Button(
                         modifier = Modifier,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = R.Color.error500,
+                            contentColor = R.Color.OnError.highEmphasis
+                        ),
                         onClick = {
                             viewModel.delete()
                         }
                     ) {
                         Text(text = "Delete")
                     }
-                    Button(
+                    OutlinedButton(
                         modifier = Modifier,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = R.Color.error500,
-                            contentColor = R.Color.OnError.highEmphasis
-                        ),
+
                         onClick = {
                             viewModel.addVariable()
                         }
@@ -102,7 +103,7 @@ fun ProjectEditPage(
                         Text(text = "Add Variable")
                     }
 
-                    Button(
+                    OutlinedButton(
                         modifier = Modifier,
                         onClick = {
                             viewModel.openDefaultVariablePickerDialog()
