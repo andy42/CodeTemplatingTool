@@ -1,6 +1,7 @@
 package com.jaehl.codeTool.di
 
 import com.jaehl.codeTool.di.modules.LocalModule
+import com.jaehl.codeTool.ui.dialog.TemplateCloneDialog.TemplateCloneComponent
 import com.jaehl.codeTool.ui.dialog.folderPicker.FolderPickerDialogComponent
 import com.jaehl.codeTool.ui.dialog.warningDialog.WarningDialogComponent
 import com.jaehl.codeTool.ui.page.projectEdit.ProjectEditComponent
@@ -26,4 +27,5 @@ interface AppComponent {
 
     fun inject(folderPickerDialogComponent : FolderPickerDialogComponent)
     fun inject(warningDialogComponent : WarningDialogComponent)
+    fun inject(templateCloneComponent : TemplateCloneComponent)
 }

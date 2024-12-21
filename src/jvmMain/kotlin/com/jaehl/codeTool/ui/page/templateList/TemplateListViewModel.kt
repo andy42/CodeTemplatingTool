@@ -40,6 +40,12 @@ class TemplateListViewModel @Inject constructor(
         navTemplateListener?.openTemplateEdit(template)
     }
 
+    fun onTemplateClone(template : Template?) {
+        template?.let {
+            navTemplateListener?.openTemplateEdit(template)
+        }
+    }
+
     fun onTemplateAddClick() {
         navTemplateListener?.openTemplateEdit(null)
     }
