@@ -12,8 +12,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import java.nio.file.Path
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.io.path.exists
 
+@Singleton
 class TemplateRepo @Inject constructor(
     private val logger: Logger,
     private val templateListLoader : ObjectListLoader<Template>,
@@ -34,6 +36,10 @@ class TemplateRepo @Inject constructor(
     }
 
     fun getTemplates() : SharedFlow<List<Template>> = templates
+
+    fun getTemplateList() : List<Template> {
+        return templateMap.values.toList()
+    }
 
     suspend fun getTemplate(id : String?) : Template? {
         if (id == null) return null
@@ -77,6 +83,25 @@ class TemplateRepo @Inject constructor(
         templateListLoader.save(templateMap.values.toList())
         templates.tryEmit(templateMap.values.toList())
         return template
+    }
+
+    fun cloneTemplate(template : Template, newTemplateName : String) : Template? {
+
+        val sourceTemplatePath = Path.of(templateUserDir+template.dirPath)
+        val newTemplatePath = Path.of(templateUserDir+pathSeparator+newTemplateName)
+
+        fileUtil.createDirectory(newTemplatePath)
+        val  newTemplate = template.copy(
+            id = createNewTemplateId(),
+            name = newTemplateName,
+            dirPath = pathSeparator+newTemplateName
+        )
+        fileUtil.copyDirectory(sourceTemplatePath, newTemplatePath)
+
+        templateMap[newTemplate.id] = newTemplate
+        templateListLoader.save(templateMap.values.toList())
+        templates.tryEmit(templateMap.values.toList())
+        return newTemplate
     }
 
     fun deleteTemplate(template : Template){

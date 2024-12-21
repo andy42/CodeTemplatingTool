@@ -33,6 +33,7 @@ interface NavTemplateListener {
     fun openTemplateList()
     fun openTemplateApply(project : Project)
 }
+
 class NavHostComponent(
     componentContext: ComponentContext,
 ) : Component,

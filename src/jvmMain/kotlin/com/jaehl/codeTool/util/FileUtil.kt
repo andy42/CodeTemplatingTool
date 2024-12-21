@@ -6,11 +6,14 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import javax.inject.Inject
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.copyToRecursively
 import kotlin.io.path.exists
 
 
 interface FileUtil {
     fun createDirectory(path : Path)
+    fun copyDirectory(sourcePath: Path, targetPath: Path)
     fun renameDirectory(oldPath : Path, newPath : Path) : Boolean
     fun deleteDirectory(path : Path)
     fun createFile(path : Path)
@@ -33,6 +36,16 @@ class FileUtilImp @Inject constructor(
     override fun createDirectory(path : Path) {
         if(!Files.exists(path)) {
             Files.createDirectory(path)
+        }
+    }
+
+    @OptIn(ExperimentalPathApi::class)
+    override fun copyDirectory(sourcePath: Path, targetPath: Path) {
+        if(Files.exists(sourcePath)) {
+            sourcePath.copyToRecursively(
+                targetPath,
+                followLinks = false
+            )
         }
     }
 
