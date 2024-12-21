@@ -6,19 +6,29 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.arkivanov.decompose.ComponentContext
 import com.jaehl.codeTool.data.model.Template
 import com.jaehl.codeTool.data.repo.TemplateRepo
+import com.jaehl.codeTool.di.AppComponent
 import com.jaehl.codeTool.ui.navigation.Component
+import com.jaehl.codeTool.ui.navigation.NavBackListener
+import com.jaehl.codeTool.ui.navigation.NavProjectListener
+import com.jaehl.codeTool.ui.navigation.NavTemplateListener
 import com.jaehl.codeTool.util.Logger
+import javax.inject.Inject
 
 class TemplateListComponent(
+    appComponent : AppComponent,
     private val componentContext: ComponentContext,
-    private val logger : Logger,
-    private val templateRepo : TemplateRepo,
-    private val onGoBackClicked: () -> Unit,
-    private val onOpenTemplateEdit: (template : Template?) -> Unit
+    navBackListener : NavBackListener,
+    navTemplateListener : NavTemplateListener
 ) : Component, ComponentContext by componentContext {
 
-    private val viewModel = TemplateListViewModel(logger, templateRepo, onOpenTemplateEdit)
+    @Inject
+    lateinit var viewModel : TemplateListViewModel
 
+    init {
+        appComponent.inject(this)
+        viewModel.navBackListener = navBackListener
+        viewModel.navTemplateListener = navTemplateListener
+    }
     @Composable
     override fun render() {
 
@@ -28,8 +38,7 @@ class TemplateListComponent(
         }
 
         TemplateListPage(
-            viewModel = viewModel,
-            onGoBackClicked = onGoBackClicked
+            viewModel = viewModel
         )
     }
 }

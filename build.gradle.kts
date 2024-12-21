@@ -18,7 +18,12 @@ version = "1.0-SNAPSHOT"
 
 val coroutinesVersion = "1.3.6"
 
-val daggerVersion by extra("2.39.1")
+val daggerVersion by extra("2.46")
+val compose_version = "1.4.0"
+
+kapt {
+    generateStubs = true
+}
 
 repositories {
     google()
@@ -40,6 +45,13 @@ kotlin {
 
                 // Dagger : A fast dependency injector for Android and Java.
                 implementation("com.google.dagger:dagger-compiler:$daggerVersion")
+                configurations.get("kapt").dependencies.add(
+                    org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
+                        "com.google.dagger",
+                        "dagger-compiler",
+                        "$daggerVersion"
+                    )
+                )
 
                 implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$coroutinesVersion")
 

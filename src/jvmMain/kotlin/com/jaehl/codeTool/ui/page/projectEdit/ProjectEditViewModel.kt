@@ -7,22 +7,26 @@ import com.jaehl.codeTool.data.model.TemplateVariableType
 import com.jaehl.codeTool.data.model.ProjectVariable
 import com.jaehl.codeTool.data.repo.ProjectRepo
 import com.jaehl.codeTool.extensions.postSwap
+import com.jaehl.codeTool.ui.navigation.NavBackListener
+import com.jaehl.codeTool.ui.util.OsPathConverter
 import com.jaehl.codeTool.ui.util.ViewModel
+import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProjectEditViewModel(
+class ProjectEditViewModel @Inject constructor(
     private val logger : Logger,
+    private val fileUtil: FileUtil,
     private val projectRepo : ProjectRepo,
-    private var project : Project?,
-    private val showFolderPickerDialog : (currentPath : String?) -> Unit,
-    private val showListPickerDialog : (index : Int) -> Unit,
-    private val showDefaultVariablePickerDialog : () -> Unit,
-    private val onGoBackClicked: () -> Unit,
-    private val showCloseWithoutSavingDialog: () -> Unit
+    private val osPathConverter : OsPathConverter
 ) : ViewModel() {
 
+    var navBackListener : NavBackListener? = null
+    var navProjectEditDialogListener : NavProjectEditDialogListener? = null
+
+    private var project : Project? = null
     var projectName = mutableStateOf<String>("")
         private set
 
@@ -33,9 +37,10 @@ class ProjectEditViewModel(
 
     var projectVariables = mutableStateListOf<ProjectVariable>()
 
-    override fun init(viewModelScope: CoroutineScope) {
+    fun init(viewModelScope: CoroutineScope, project : Project?) {
         super.init(viewModelScope)
 
+        this.project = project
 
         viewModelScope.launch {
             project?.let {
@@ -57,7 +62,7 @@ class ProjectEditViewModel(
     }
 
     fun onProjectVariableTypeClick(index : Int) = viewModelScope.launch {
-        showListPickerDialog(index)
+        navProjectEditDialogListener?.showListPickerDialog(index)
     }
 
     fun onProjectVariableTypeChange(index : Int, type : TemplateVariableType) {
@@ -81,13 +86,13 @@ class ProjectEditViewModel(
     }
 
     fun onOpenPackagePickerDialog() = viewModelScope.launch {
-        showFolderPickerDialog(
-            if(projectPath.value.isNotEmpty()) projectPath.value else null
+        navProjectEditDialogListener?.showFolderPickerDialog(
+            if(projectPath.value.isNotEmpty()) projectPath.value else fileUtil.getUserDir()
         )
     }
 
     fun openDefaultVariablePickerDialog()  = viewModelScope.launch {
-        showDefaultVariablePickerDialog()
+        navProjectEditDialogListener?.showDefaultVariablePickerDialog(ProjectVariable.createDefaults(osPathConverter))
     }
 
     fun onAddDefaultVariable(projectVariable : ProjectVariable) = viewModelScope.launch {
@@ -126,9 +131,9 @@ class ProjectEditViewModel(
     }
     fun onNavBackClick() = viewModelScope.launch {
         if(checkIfUnsaved()){
-            showCloseWithoutSavingDialog()
+            navProjectEditDialogListener?.showCloseWithoutSavingDialog()
         } else {
-            onGoBackClicked()
+            navBackListener?.navigateBack()
         }
     }
 
@@ -146,11 +151,11 @@ class ProjectEditViewModel(
     fun delete() = viewModelScope.launch {
         project?.let {
             projectRepo.deleteProject(it.id)
-            onGoBackClicked()
+            navBackListener?.navigateBack()
         }
     }
 
     fun closeWithoutSaving() {
-        onGoBackClicked()
+        navBackListener?.navigateBack()
     }
 }

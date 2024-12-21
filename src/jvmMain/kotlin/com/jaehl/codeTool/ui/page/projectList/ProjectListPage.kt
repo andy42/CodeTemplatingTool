@@ -17,8 +17,7 @@ import com.jaehl.codeTool.ui.component.AppBar
 
 @Composable
 fun ProjectListPage(
-    viewModel : ProjectListViewModel,
-    onGoBackClicked: () -> Unit
+    viewModel : ProjectListViewModel
 ) {
     Box(
         modifier = Modifier
@@ -31,10 +30,9 @@ fun ProjectListPage(
                 title = "Home",
                 returnButton = false,
                 onBackClick = {
-                    onGoBackClicked()
+                    viewModel.onBackClick()
                 }
             )
-            val state : ScrollState = rememberScrollState()
 
             Column(
                 modifier = Modifier

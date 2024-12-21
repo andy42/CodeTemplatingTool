@@ -8,7 +8,6 @@ import com.jaehl.codeTool.util.Logger
 
 class ListPickerComponent <T>(
     private val componentContext: ComponentContext,
-    private val logger : Logger,
     private val requestId : String,
     private val onDismissed : () -> Unit,
     private val title: String,

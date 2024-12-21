@@ -3,22 +3,24 @@ package com.jaehl.codeTool.ui.dialog.warningDialog
 import com.jaehl.codeTool.ui.util.ViewModel
 import com.jaehl.codeTool.util.Logger
 import kotlinx.coroutines.CoroutineScope
+import javax.inject.Inject
 
-class WarningViewModel(
-    private val logger : Logger,
-    private val decline: () -> Unit,
-    private val onAccept: () -> Unit
+class WarningViewModel @Inject constructor(
+    private val logger : Logger
 ) : ViewModel() {
 
+    private lateinit var config : WarningDialogConfig
+
     fun onAcceptClick() {
-        onAccept()
+        config.acceptCallBack()
     }
 
     fun onDeclineClick() {
-        decline()
+        config.declineCallBack()
     }
 
-    override fun init(viewModelScope: CoroutineScope) {
+    fun init(viewModelScope: CoroutineScope, config : WarningDialogConfig) {
         super.init(viewModelScope)
+        this.config = config
     }
 }

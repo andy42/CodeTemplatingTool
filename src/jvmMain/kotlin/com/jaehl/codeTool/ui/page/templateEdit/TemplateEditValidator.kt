@@ -3,6 +3,7 @@ package com.jaehl.codeTool.ui.page.templateEdit
 import com.jaehl.codeTool.data.model.Template
 import com.jaehl.codeTool.data.repo.TemplateRepo
 import com.jaehl.codeTool.util.FileUtil
+import javax.inject.Inject
 
 interface TemplateEditValidator {
     fun setValidatorListener(listener : TemplateEditValidatorListener)
@@ -20,7 +21,7 @@ interface TemplateEditValidatorListener {
     fun onTemplateFilePathDestinationError(error : String)
 }
 
-class TemplateEditValidatorImp(
+class TemplateEditValidatorImp @Inject constructor(
     private val fileUtil: FileUtil,
     private val templateRepo: TemplateRepo
 ) : TemplateEditValidator {

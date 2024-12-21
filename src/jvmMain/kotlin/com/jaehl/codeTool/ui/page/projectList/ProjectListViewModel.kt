@@ -4,19 +4,23 @@ import androidx.compose.runtime.mutableStateListOf
 import com.jaehl.codeTool.data.model.Project
 import com.jaehl.codeTool.data.repo.ProjectRepo
 import com.jaehl.codeTool.extensions.postSwap
+import com.jaehl.codeTool.ui.navigation.NavBackListener
+import com.jaehl.codeTool.ui.navigation.NavProjectListener
+import com.jaehl.codeTool.ui.navigation.NavTemplateListener
 import com.jaehl.codeTool.ui.util.ViewModel
 import com.jaehl.codeTool.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProjectListViewModel(
+class ProjectListViewModel @Inject constructor(
     private val logger : Logger,
-    private val projectRepo : ProjectRepo,
-    private val onProjectSelected: (project : Project) -> Unit,
-    private val onProjectEdit : (project : Project?) -> Unit,
-    private val onTemplatesEdit : () -> Unit
+    private val projectRepo : ProjectRepo
 ) : ViewModel() {
 
+    var navBackListener : NavBackListener? = null
+    var navProjectListener : NavProjectListener? = null
+    var navTemplateListener : NavTemplateListener? = null
     var projects = mutableStateListOf<Project>()
         private set
 
@@ -29,18 +33,22 @@ class ProjectListViewModel(
         }
     }
 
+    fun onBackClick() {
+        navBackListener?.navigateBack()
+    }
+
     fun onProjectSelectClick(project : Project) = viewModelScope.launch {
-        onProjectSelected(project)
+        navTemplateListener?.openTemplateApply(project)
     }
 
     fun onProjectAddClick() = viewModelScope.launch {
-        onProjectEdit(null)
+        navProjectListener?.openProjectEdit(null)
     }
     fun onProjectEditClick(project : Project) = viewModelScope.launch {
-        onProjectEdit(project)
+        navProjectListener?.openProjectEdit(project)
     }
 
     fun onTemplatesEditClick() = viewModelScope.launch {
-        onTemplatesEdit()
+        navTemplateListener?.openTemplateList()
     }
 }

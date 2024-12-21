@@ -7,13 +7,14 @@ import com.jaehl.codeTool.data.model.TemplateFileOutput
 import com.jaehl.codeTool.util.FileUtil
 import com.jaehl.codeTool.util.Logger
 import java.nio.file.Path
+import javax.inject.Inject
 
 interface TemplateParser {
     fun parseString(value : String, variableValues : Map<String, String>) : String
     fun parse(project : Project, template : Template, variableValues : Map<String, String>) : List<TemplateFileOutput>
 }
 
-class TemplateParserImp(
+class TemplateParserImp @Inject constructor(
     private val fileUtil : FileUtil,
     private val logger: Logger
 ) : TemplateParser{

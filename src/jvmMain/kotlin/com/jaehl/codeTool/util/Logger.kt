@@ -1,6 +1,8 @@
 package com.jaehl.codeTool.util
 
-class Logger {
+import javax.inject.Inject
+
+class Logger @Inject constructor () {
     fun log(message : String) {
         println("Log : $message")
     }

@@ -11,9 +11,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import java.nio.file.Path
+import javax.inject.Inject
 import kotlin.io.path.exists
 
-class TemplateRepo(
+class TemplateRepo @Inject constructor(
     private val logger: Logger,
     private val templateListLoader : ObjectListLoader<Template>,
     private val osPathConverter : OsPathConverter,
@@ -56,7 +57,9 @@ class TemplateRepo(
     fun updateTemplate(oldTemplate : Template?, newTemplate : Template) : Template{
         var template = newTemplate.copy(dirPath = createTemplateDir(newTemplate))
         if(template.id.isEmpty()){
-            template.id = createNewTemplateId()
+            template = template.copy(
+                id = createNewTemplateId()
+            )
         }
         if(oldTemplate?.dirPath.isNullOrBlank()){
 
@@ -77,9 +80,6 @@ class TemplateRepo(
     }
 
     fun deleteTemplate(template : Template){
-        if(template.id.isEmpty()){
-            template.id = createNewTemplateId()
-        }
         for(templateFile in template.files) {
             fileUtil.deleteFile(Path.of(templateUserDir+template.dirPath+templateFile.path))
         }
@@ -142,7 +142,11 @@ class TemplateRepo(
         fileUtil.createFile(getTemplateFilePath(template,newTemplateFile))
         val files = template.files.toMutableList()
         files.add(newTemplateFile)
-        templateMap[template.id]?.files = files
+
+        templateMap[template.id] = template.copy(
+            files = files
+        )
+
         templateListLoader.save(templateMap.values.toList())
         templates.tryEmit(templateMap.values.toList())
     }
@@ -159,7 +163,10 @@ class TemplateRepo(
             files.add(newTemplateFile)
         }
         writeTemplateFile(template, newTemplateFile, fileData)
-        templateMap[templateId]?.files = files
+
+        templateMap[templateId] = template.copy(
+            files = files
+        )
 
         templateListLoader.save(templateMap.values.toList())
         templates.tryEmit(templateMap.values.toList())
@@ -178,7 +185,10 @@ class TemplateRepo(
         else {
             return false
         }
-        templateMap[templateId]?.files = files
+
+        templateMap[templateId] = template.copy(
+            files = files
+        )
 
         templateListLoader.save(templateMap.values.toList())
         templates.tryEmit(templateMap.values.toList())

@@ -160,7 +160,7 @@ fun MainPannel(
                 Text(text = "Delete Template")
             }
 
-            Button(
+            OutlinedButton(
                 modifier = Modifier,
                 onClick = {
                     viewModel.addVariable()
