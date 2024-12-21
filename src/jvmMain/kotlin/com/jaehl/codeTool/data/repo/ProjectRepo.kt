@@ -9,7 +9,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ProjectRepo @Inject constructor(
     private val logger: Logger,
     private val projectListLoader : ObjectListLoader<Project>,
