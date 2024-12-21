@@ -153,7 +153,7 @@ class ProjectEditComponent(
     override fun render() {
         val scope = rememberCoroutineScope()
         LaunchedEffect(viewModel, project) {
-            viewModel.init(scope)
+            viewModel.init(scope, project)
         }
 
         ProjectEditPage(
